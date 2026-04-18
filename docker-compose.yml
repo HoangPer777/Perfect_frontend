@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+    # TODO: Thêm các biến môi trường cho Cloudinary, Stripe (Public keys)
+    # env_file:
+    #   - .env.local
