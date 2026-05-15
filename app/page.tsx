@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ListProduct from "@/components/products/ListProduct";
 
 export default function Home() {
   return (
@@ -23,23 +24,24 @@ export default function Home() {
         </Link>
       </div>
 
-      <section className="mt-20 w-full max-w-6xl">
-        <h2 className="text-2xl font-bold mb-8">Featured Sections TODOs:</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-bold">Most Viewed</h3>
-            {/* TODO: Display top viewed products */}
-          </div>
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-bold">Latest Products</h3>
-            {/* TODO: Display newest products */}
-          </div>
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-bold">Hot Designers</h3>
-            {/* TODO: Display trending designers */}
-          </div>
-        </div>
-      </section>
+      {/*<section className="mt-20 w-full max-w-6xl">*/}
+      {/*  <h2 className="text-2xl font-bold mb-8">Featured Sections TODOs:</h2>*/}
+      {/*  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">*/}
+      {/*    <div className="p-6 border rounded-lg">*/}
+      {/*      <h3 className="font-bold">Most Viewed</h3>*/}
+      {/*      /!* TODO: Display top viewed products *!/*/}
+      {/*    </div>*/}
+      {/*    <div className="p-6 border rounded-lg">*/}
+      {/*      <h3 className="font-bold">Latest Products</h3>*/}
+      {/*      /!* TODO: Display newest products *!/*/}
+      {/*    </div>*/}
+      {/*    <div className="p-6 border rounded-lg">*/}
+      {/*      <h3 className="font-bold">Hot Designers</h3>*/}
+      {/*      /!* TODO: Display trending designers *!/*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</section>*/}
+        <ListProduct />
     </div>
   );
 }

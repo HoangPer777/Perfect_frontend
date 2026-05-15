@@ -7,4 +7,15 @@ export interface AddProductRequest {
     categories: string[];
 }
 
+export interface CardProductResponse {
+    id: string;
+    title: string;
+    price: number;
+    thumbnailUrl: string;
+    ratingAvg: number;
+    soldCount: number;
+    avatarUrlDesigner: string;
+    usernameDesigner: string;
+}
+
 export interface ProductResponse {}
