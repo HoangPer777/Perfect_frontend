@@ -35,5 +35,9 @@ export const productService = {
             }
         })
         return res.data
+    },
+    getProductDetail: async (id: string): Promise<ProductResponse> => {
+        const res = await api.get(`/products/${id}`);
+        return res.data
     }
 };
