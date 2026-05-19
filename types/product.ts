@@ -18,4 +18,24 @@ export interface CardProductResponse {
     usernameDesigner: string;
 }
 
-export interface ProductResponse {}
+export interface ProductResponse {
+    id: string;
+    designer: {
+        id: string;
+        email: string;
+        username: string;
+        avatarUrl: string;
+    }
+    title: string;
+    description: string;
+    thumbnailUrl: string;
+    viewCount: number;
+    soldCount: number;
+    ratingAvg: number;
+    images: {
+        id: string;
+        url: string;
+    }[]
+    createdAt: string;
+    updatedAt: string;
+}
