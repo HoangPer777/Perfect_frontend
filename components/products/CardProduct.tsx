@@ -1,10 +1,11 @@
 "use client"
 import React from 'react';
 import {CardProductResponse} from "@/types/product";
+import Link from "next/link";
 
 export default function CardProduct(product: CardProductResponse) {
     return (
-        <div className="group cursor-pointer flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
+        <Link href={`/products/${product.id}`} className="group cursor-pointer flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
             {/* Ảnh Thumbnail */}
             <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                 <img
@@ -49,7 +50,7 @@ export default function CardProduct(product: CardProductResponse) {
                             alt={product.usernameDesigner}
                         />
                         <span className="text-xs font-semibold text-slate-600 truncate max-w-[100px]">
-                            @{product.usernameDesigner}
+                            {product.usernameDesigner}
                         </span>
                     </div>
                     <button className="text-[10px] font-bold uppercase tracking-wider text-primary hover:text-slate-900 transition-colors">
@@ -57,6 +58,6 @@ export default function CardProduct(product: CardProductResponse) {
                     </button>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

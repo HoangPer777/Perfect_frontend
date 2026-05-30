@@ -1,18 +1,31 @@
 "use client";
 
-import { useRef, useState, ChangeEvent, DragEvent, useEffect } from "react";
-import {FilePreview} from "@/types/file";
-import {useProductStore} from "@/store/addProductStore";
+import { useRef, ChangeEvent, DragEvent, useEffect } from "react";
+import { FilePreview } from "@/types/file";
+import { useProductStore } from "@/store/addProductStore";
 
-export default function MultiUploadBox() {
-    const {previews, thumbnailId} = useProductStore();
-    const setField = useProductStore((state) => state.setField)
+interface MultiUploadBoxProps {
+    isEditMode?: boolean;
+    initialImages?: { id: string; url: string }[];
+    initialThumbnailUrl?: string;
+}
+
+export default function MultiUploadBox({ isEditMode = false, initialImages, initialThumbnailUrl }: MultiUploadBoxProps) {
+    const { previews, thumbnailId } = useProductStore();
+    const setField = useProductStore((state) => state.setField);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Kích hoạt chọn file
+    // Không tự động gán dữ liệu ban đầu nữa mà chỉ làm nhiệm vụ dọn dẹp RAM
+    useEffect(() => {
+        return () => {
+            previews.forEach(item => {
+                if (item.file) URL.revokeObjectURL(item.url);
+            });
+        };
+    }, []);
+
     const handleClick = () => fileInputRef.current?.click();
 
-    // Xử lý logic khi nhận file (từ input hoặc drag & drop)
     const processFiles = (files: FileList | File[]) => {
         const newPreviews: FilePreview[] = Array.from(files)
             .filter((file) => file.type.startsWith("image/"))
@@ -23,11 +36,10 @@ export default function MultiUploadBox() {
             }));
 
         const updated = [...previews, ...newPreviews];
-        // Nếu chưa có thumbnail, mặc định lấy ảnh đầu tiên của danh sách mới
         if (!thumbnailId && updated.length > 0) {
-            setField("thumbnailId", (updated[0].id));
+            setField("thumbnailId", updated[0].id);
         }
-        setField("previews", updated)
+        setField("previews", updated);
     };
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,24 +51,22 @@ export default function MultiUploadBox() {
         if (e.dataTransfer.files) processFiles(e.dataTransfer.files);
     };
 
-    // Xóa file
     const removeFile = (id: string) => {
         const filtered = previews.filter((item) => item.id !== id);
 
-        // Nếu xóa đúng cái đang là thumbnail, chọn lại cái đầu tiên trong mảng còn lại
         if (id === thumbnailId) {
-            setField("thumbnailId", (filtered.length > 0 ? filtered[0].id : null));
+            setField("thumbnailId", filtered.length > 0 ? filtered[0].id : null);
         }
 
-        // Giải phóng bộ nhớ
         const removedItem = previews.find((item) => item.id === id);
-        if (removedItem) URL.revokeObjectURL(removedItem.url);
-        setField("previews", filtered)
+        if (removedItem && removedItem.file) {
+            URL.revokeObjectURL(removedItem.url);
+        }
+        setField("previews", filtered);
     };
 
     return (
         <div className="space-y-6 mb-8">
-            {/* Vùng Dropzone chính */}
             <div
                 onClick={handleClick}
                 onDrop={handleDrop}
@@ -83,7 +93,6 @@ export default function MultiUploadBox() {
                 <p className="text-xs text-gray-400 mt-2 italic">Mẹo: Click vào ảnh bên dưới để chọn làm ảnh bìa (Thumbnail)</p>
             </div>
 
-            {/* Grid hiển thị danh sách ảnh */}
             {previews.length > 0 && (
                 <div className="space-y-3">
                     <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-2">Project Assets ({previews.length})</h3>
@@ -94,9 +103,9 @@ export default function MultiUploadBox() {
                             return (
                                 <div
                                     key={item.id}
-                                    onClick={() => setField("thumbnailId", (item.id))}
+                                    onClick={() => setField("thumbnailId", item.id)}
                                     className={`group relative aspect-square rounded-2xl overflow-hidden cursor-pointer transition-all border-4 
-                    ${isThumbnail ? "border-violet-500 shadow-lg scale-[1.02]" : "border-transparent hover:border-violet-200"}`}
+                                    ${isThumbnail ? "border-violet-500 shadow-lg scale-[1.02]" : "border-transparent hover:border-violet-200"}`}
                                 >
                                     <img
                                         src={item.url}
@@ -104,24 +113,21 @@ export default function MultiUploadBox() {
                                         className="w-full h-full object-cover"
                                     />
 
-                                    {/* Badge Thumbnail */}
                                     {isThumbnail && (
                                         <div className="absolute top-2 left-2 bg-violet-500 text-white text-[9px] font-bold px-2 py-1 rounded-md shadow-md">
                                             THUMBNAIL
                                         </div>
                                     )}
 
-                                    {/* Lớp phủ khi hover */}
                                     {!isThumbnail && (
                                         <div className="absolute inset-0 bg-violet-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <span className="text-white text-[10px] font-bold bg-black/20 px-2 py-1 rounded-full backdrop-blur-sm">Đặt làm ảnh bìa</span>
                                         </div>
                                     )}
 
-                                    {/* Nút xóa */}
                                     <button
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Ngăn sự kiện click chọn thumbnail
+                                            e.stopPropagation();
                                             removeFile(item.id);
                                         }}
                                         className="absolute top-2 right-2 w-6 h-6 bg-white/90 hover:bg-red-500 hover:text-white text-gray-500 rounded-full flex items-center justify-center shadow-sm transition-colors"
@@ -132,8 +138,8 @@ export default function MultiUploadBox() {
                             );
                         })}
 
-                        {/* Nút thêm nhanh */}
                         <button
+                            type="button"
                             onClick={handleClick}
                             className="aspect-square rounded-2xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-gray-300 hover:border-violet-200 hover:text-violet-400 transition-all bg-gray-50/50"
                         >
