@@ -10,7 +10,7 @@ interface ProductState {
     thumbnailId: string | null;
     previews: FilePreview[];
     categories: Category[];
-    
+    status: string;
     // Actions
     toggleCategory: (category: Category) => void;
     setField: (field: keyof Omit<ProductState, 'setField' | 'resetForm' | 'toggleCategory'>, value: any) => void;
@@ -26,7 +26,7 @@ export const useProductStore = create<ProductState>()(
             thumbnailId: null,
             previews: [],
             categories: [],
-
+            status: "ARCHIVED",
             // Hàm cập nhật field chung
             setField: (field, value) => set((state) => ({ ...state, [field]: value })),
 

@@ -1,4 +1,5 @@
 export interface AddProductRequest {
+    id?: string;
     title: string;
     description: string;
     thumbnailUrl: string;
@@ -35,7 +36,32 @@ export interface ProductResponse {
     images: {
         id: string;
         url: string;
-    }[]
+    }[];
+    categories: {
+        id: string;
+        name: string;
+    }[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface AddProductResponse {
+    id: string;
+    title: string;
+    description: string;
+    thumbnailUrl: string;
+    status: string;
+    viewCount: number;
+    soldCount: number;
+    ratingAvg: number;
+    images: {
+        id: string;
+        url: string;
+    }[];
+    categories: {
+        id: string;
+        name: string;
+    }[];
     createdAt: string;
     updatedAt: string;
 }

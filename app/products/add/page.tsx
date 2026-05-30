@@ -1,7 +1,7 @@
 import ProductForm from "@/components/products/ProductForm";
 import UploadBox from "@/components/products/UploadBox";
 
-export default function AddProjectPage() {
+export default function AddProductPage() {
     return (
         <div className="flex min-h-screen bg-[#f8faff]">
             <main className="flex-1 flex flex-col">
@@ -10,7 +10,7 @@ export default function AddProjectPage() {
                     <button className="text-sm text-gray-500 hover:text-violet-600 transition-colors">
                         ← Back to Profile
                     </button>
-                    <h2 className="text-lg font-bold text-slate-700">Add New Project to Bio</h2>
+                    <h2 className="text-lg font-bold text-slate-700">Add New Product to Bio</h2>
                     <div className="flex items-center gap-4">
                         <div className="w-8 h-8 rounded-full bg-orange-100 border border-orange-200" />
                     </div>

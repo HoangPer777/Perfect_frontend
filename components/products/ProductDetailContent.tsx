@@ -169,9 +169,9 @@ export default function ProductDetailContent({ product }: Props) {
                     </div>
 
                     <div className="flex flex-wrap gap-2 order-1 md:order-2 md:justify-end">
-                        {['Editing Service', 'Design & Media'].map((tag) => (
-                            <span key={tag} className="px-4 py-2 bg-[#F1F3F6] text-gray-600 rounded-full text-xs font-semibold">
-                                {tag}
+                        {product.categories.map((tag) => (
+                            <span key={tag.id} className="px-4 py-2 bg-[#F1F3F6] text-gray-600 rounded-full text-xs font-semibold">
+                                {tag.name}
                             </span>
                         ))}
                     </div>

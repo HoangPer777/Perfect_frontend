@@ -13,77 +13,6 @@ import {CardDesignerResponse} from "@/types/designer";
 const SwiperContainer = Swiper as any;
 const SwiperItem = SwiperSlide as any;
 
-const MOCK_PRODUCTS = [
-    {
-        id: "1",
-        title: "Cyberpunk Neon Lightroom Presets",
-        price: 19.99,
-        thumbnailUrl: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&q=80",
-        ratingAvg: 4.9,
-        soldCount: 850,
-        avatarUrlDesigner: "https://i.pravatar.cc/150?u=a",
-        usernameDesigner: "neon_vibes"
-    },
-    {
-        id: "2",
-        title: "Abstract 3D Glass Shapes Pack",
-        price: 45.00,
-        thumbnailUrl: "https://images.unsplash.com/photo-1633167606207-d840b5070fc2?w=600&q=80",
-        ratingAvg: 4.7,
-        soldCount: 320,
-        avatarUrlDesigner: "https://i.pravatar.cc/150?u=b",
-        usernameDesigner: "dimensio_art"
-    },
-    {
-        id: "3",
-        title: "Minimalist Portfolio Framer Template",
-        price: 59.00,
-        thumbnailUrl: "https://images.unsplash.com/photo-1517292987719-0369a794ec0f?w=600&q=80",
-        ratingAvg: 5.0,
-        soldCount: 120,
-        avatarUrlDesigner: "https://i.pravatar.cc/150?u=c",
-        usernameDesigner: "studio_minimal"
-    },
-    {
-        id: "4",
-        title: "Hand-Drawn Botanical Illustrations",
-        price: 15.00,
-        thumbnailUrl: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=600&q=80",
-        ratingAvg: 4.8,
-        soldCount: 2400,
-        avatarUrlDesigner: "https://i.pravatar.cc/150?u=d",
-        usernameDesigner: "flora_design"
-    },
-    {
-        id: "5",
-        title: "Pro Cinematic Video LUTs",
-        price: 29.00,
-        thumbnailUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=80",
-        ratingAvg: 4.6,
-        soldCount: 940,
-        avatarUrlDesigner: "https://i.pravatar.cc/150?u=e",
-        usernameDesigner: "movie_magic"
-    },
-    {
-        id: "6",
-        title: "Urban Street Photography Overlays",
-        price: 22.00,
-        thumbnailUrl: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600&q=80",
-        ratingAvg: 4.9,
-        soldCount: 560,
-        avatarUrlDesigner: "https://i.pravatar.cc/150?u=f",
-        usernameDesigner: "city_walker"
-    }
-];
-
-const MOCK_DESIGNERS = [
-    { id: "d1", username: "alex_vfx", totalSold: 200, avatarUrl: "https://i.pravatar.cc/150?u=10" },
-    { id: "d2", username: "sarah_illustrates", totalSold: 200, avatarUrl: "https://i.pravatar.cc/150?u=11" },
-    { id: "d3", username: "pixel_king", totalSold: 200, avatarUrl: "https://i.pravatar.cc/150?u=12" },
-    { id: "d4", username: "maya_3d", totalSold: 200, avatarUrl: "https://i.pravatar.cc/150?u=13" },
-    { id: "d5", username: "the_editor", totalSold: 200, avatarUrl: "https://i.pravatar.cc/150?u=14" },
-    { id: "d6", username: "vector_queen", totalSold: 200, avatarUrl: "https://i.pravatar.cc/150?u=15" },
-];
 export default function ListProduct() {
     const [mostViewedProducts, setMostViewedProducts] = useState<CardProductResponse[]>([]);
     const [newestProducts, setNewestProducts] = useState<CardProductResponse[]>([]);
@@ -94,15 +23,12 @@ export default function ListProduct() {
         const fetchInfo = async () => {
             const view = await productService.getMostViewedProducts();
             setMostViewedProducts(view);
-            if(view.length === 0) setMostViewedProducts(MOCK_PRODUCTS)
             
             const newest = await productService.getNewestProducts()
             setNewestProducts(newest)
-            if(newest.length === 0) setNewestProducts(MOCK_PRODUCTS)
             
             const hottest = await productService.getHottestDesigners()
             setHottestDesigner(hottest)
-            if(hottest.length === 0) setHottestDesigner(MOCK_DESIGNERS)
         }
         fetchInfo();
     }, []);
@@ -193,7 +119,7 @@ export default function ListProduct() {
                                         alt={designer.username}
                                     />
                                 </div>
-                                <h3 className="font-bold text-slate-800 text-sm">@{designer.username}</h3>
+                                <h3 className="font-bold text-slate-800 text-sm">{designer.username}</h3>
                                 <p className="text-[11px] text-primary font-bold uppercase mt-1">{designer.totalSold}</p>
                                 <button className="mt-4 px-6 py-2 rounded-full bg-slate-900 text-white text-[11px] font-bold hover:bg-primary transition-colors w-full">
                                     View Profile
