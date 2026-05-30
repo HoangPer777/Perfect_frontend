@@ -16,6 +16,10 @@ export const productService = {
         const res = await api.put("/products/update", data);
         return res.data
     },
+    deleteProduct: async (productId: string): Promise<boolean> => {
+      const res = await api.delete(`/products/delete/${productId}`); 
+      return res.data
+    },
     getMostViewedProducts: async (): Promise<CardProductResponse[]> => {
         const res = await api.get("/products/view", {
             params: {

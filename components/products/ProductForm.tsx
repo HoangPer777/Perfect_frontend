@@ -165,19 +165,18 @@ export default function ProductForm({ isEditMode = false, initialData, onDeleteS
         if (!initialData?.id) return;
         if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
             setIsDeleting(true);
-            // try {
-            //     const success = await productService.deleteProduct(productId);
-            //     if (success) {
-            //         alert("Xóa sản phẩm thành công!");
-            //         resetForm();
-            //         if (onDeleteSuccess) onDeleteSuccess();
-            //     } else {
-            //         alert("Xóa sản phẩm thất bại!");
-            //     }
-            // } catch (error) {
-            //     console.error(error);
-            //     alert("Lỗi khi xóa sản phẩm!");
-            // }
+            try {
+                const success = await productService.deleteProduct(initialData.id);
+                if (success) {
+                    alert("Xóa sản phẩm thành công!");
+                    resetForm();
+                    if (onDeleteSuccess) onDeleteSuccess();
+                } else {
+                    alert("Xóa sản phẩm thất bại!");
+                }
+            } catch (error) {
+                alert("Lỗi khi xóa sản phẩm!");
+            }
             setIsDeleting(false);
         }
     };

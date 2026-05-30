@@ -1,7 +1,7 @@
 "use client"; 
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation"; 
+import {useParams, useRouter} from "next/navigation"; 
 import ProductForm from "@/components/products/ProductForm";
 import MultiUploadBox from "@/components/products/UploadBox";
 import { productService } from "@/services/products/product.service";
@@ -10,7 +10,7 @@ import {AddProductResponse} from "@/types/product";
 export default function EditProductPage() {
     const params = useParams();
     const productId = params?.id as string;
-
+    const router = useRouter();
     const [product, setProduct] = useState<AddProductResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -91,6 +91,7 @@ export default function EditProductPage() {
                             soldCount: product.soldCount,
                         }}
                         onSaveSuccess={(data) => setProduct(data)}
+                        onDeleteSuccess={router.back}
                     />
 
                 </div>
