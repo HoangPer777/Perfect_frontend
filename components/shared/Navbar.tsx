@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, User, Bell, ShoppingCart, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
+import {useCartStore} from "@/store/cartStore";
 
 export default function Navbar() {
   const router = useRouter();
@@ -12,7 +13,8 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const { cartCount, resetCount } = useCartStore()
+      
   useEffect(() => {
     setMounted(true);
     
@@ -27,6 +29,7 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
+    resetCount();
     logout();
     setDropdownOpen(false);
     router.push("/login");
@@ -61,9 +64,16 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/cart" className="p-2 hover:bg-muted rounded-full relative text-gray-600 hover:text-primary transition-colors">
+            <Link
+                href="/cart"
+                className="p-2 hover:bg-muted rounded-full relative text-gray-600 hover:text-primary transition-colors flex items-center justify-center"
+            >
               <ShoppingCart size={20} />
-              {/* TODO: Add items count bubble */}
+              {cartCount !== null && cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-scaleUp">
+                        {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+              )}
             </Link>
             <Link href="/notifications" className="p-2 hover:bg-muted rounded-full relative text-gray-600 hover:text-primary transition-colors">
               <Bell size={20} />

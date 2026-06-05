@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, Loader2, Grid } from "lucide-react";
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/authStore";
+import {cartService} from "@/services/cart/cart.service";
+import {useCartStore} from "@/store/cartStore";
 
 export default function LoginContent() {
   const router = useRouter();
@@ -17,6 +19,7 @@ export default function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const setFieldCart = useCartStore((state) => state.setField);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +36,9 @@ export default function LoginContent() {
         role: response.user.roles[0] as any, // Simplified for now
       };
       setAuth(user, response.accessToken);
+      
+      const countCartItems = await cartService.countCartItems();
+      setFieldCart("cartCount", countCartItems);
       
       router.push("/");
     } catch (err: any) {

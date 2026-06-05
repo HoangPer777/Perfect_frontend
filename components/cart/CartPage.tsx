@@ -1,4 +1,3 @@
-// app/cart/CartPageClient.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -7,29 +6,53 @@ import { CartItemResponse } from '@/types/cart';
 import { PageResponse } from "@/types/common/page";
 import { ChevronRight, Trash2, Clock, RefreshCw, ShoppingCart, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { cartService } from '@/services/cart/cart.service'; // Đảm bảo đường dẫn này đúng với project của bạn
+import { cartService } from '@/services/cart/cart.service';
+import Link from "next/link";
+import { useAuthStore } from "@/store/authStore";
+import {useCartStore} from "@/store/cartStore";
 
-export default function CartPageClient() {
+export default function CartPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
-
-    // 1. Quản lý trạng thái dữ liệu bằng React State
+    const { user } = useAuthStore();
     const [cartData, setCartData] = useState<PageResponse<CartItemResponse> | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
+    const { decrementCount } = useCartStore();
 
-    // Đọc số trang hiện tại từ URL query (Mặc định là trang 1 nếu không truyền)
     const currentPage = Number(searchParams.get('page')) || 1;
-    const size = 10; // Đặt kích thước cố định là 10 phần tử/trang
+    const size = 10;
 
-    // 2. Fetch data từ API khi số trang (currentPage) thay đổi
     useEffect(() => {
+        const verifyUser = () => {
+            const currentUser = useAuthStore.getState().user; // Lấy giá trị mới nhất trực tiếp từ Store
+            if (!currentUser) {
+                router.push('/login');
+            } else {
+                setIsAuthChecked(true);
+            }
+        };
+
+        // Nếu Zustand đã nạp xong dữ liệu từ localStorage lên RAM
+        if (useAuthStore.persist?.hasHydrated?.()) {
+            verifyUser();
+        } else {
+            // Nếu chưa nạp xong (Thường là khi vừa F5), lắng nghe sự kiện nạp xong của Zustand
+            const unsubFinishHydrate = useAuthStore.persist.onFinishHydration(() => {
+                verifyUser();
+            });
+            return () => unsubFinishHydrate();
+        }
+    }, [user, router]);
+
+    useEffect(() => {
+        if (!isAuthChecked || !user) return;
+
         const loadCartData = async () => {
             try {
                 setLoading(true);
                 setError(null);
-
-                // Gọi hàm API của bạn (Hàm này bên trong đã tự xử lý logic trừ 1 để khớp với Spring Boot)
                 const data = await cartService.getCarts(currentPage, size);
                 setCartData(data);
             } catch (err: any) {
@@ -41,25 +64,27 @@ export default function CartPageClient() {
         };
 
         loadCartData();
-    }, [currentPage]); // Chạy lại hiệu ứng này mỗi khi số trang thay đổi
+    }, [currentPage, isAuthChecked, user]);
 
-    // 3. Xử lý chuyển trang bằng cách push param lên URL thanh địa chỉ
+    // Xử lý chuyển trang
     const handlePageChange = (newPage: number) => {
         if (!cartData || newPage < 1 || newPage > cartData.totalPages) return;
         router.push(`/cart?page=${newPage}`);
     };
 
-    // 4. Xử lý xóa item khỏi giỏ hàng
+    // Xử lý xóa item
     const handleDeleteItem = async (id: string) => {
         if (confirm("Bạn có chắc chắn muốn xóa dịch vụ này khỏi giỏ hàng?")) {
             try {
-                // TODO: Bật hàm delete thực tế của bạn ở đây
-                // await cartService.deleteCartItem(id);
-                alert(`Xóa thành công item: ${id}`);
-
-                // Tải lại dữ liệu trang hiện tại sau khi xóa thành công
-                const data = await cartService.getCarts(currentPage, size);
-                setCartData(data);
+                const res = await cartService.deleteCartItem(id);
+                if(res) {
+                    alert(`Xóa thành công item!`);
+                    const data = await cartService.getCarts(currentPage, size);
+                    setCartData(data);
+                    decrementCount();
+                } else {
+                    alert(`Đã có lỗi khi xóa item!`);
+                }
             } catch (err) {
                 alert("Xóa thất bại, vui lòng kiểm tra lại!");
             }
@@ -82,10 +107,8 @@ export default function CartPageClient() {
         }
     };
 
-    // --- CÁC TRẠNG THÁI HIỂN THỊ ĐẶC BIỆT ---
-
-    // Trạng thái đang tải dữ liệu (Loading skeleton/spinner)
-    if (loading) {
+    // Hiện màn hình loading cho đến khi xác thực xong xuôi dữ liệu User từ LocalStorage
+    if (!isAuthChecked || loading) {
         return (
             <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center gap-3">
                 <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
@@ -94,7 +117,6 @@ export default function CartPageClient() {
         );
     }
 
-    // Trạng thái gặp lỗi khi gọi API
     if (error) {
         return (
             <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4">
@@ -112,7 +134,6 @@ export default function CartPageClient() {
         );
     }
 
-    // Mảng items thực tế lấy ra từ state
     const items = cartData?.content || [];
 
     return (
@@ -135,7 +156,6 @@ export default function CartPageClient() {
                     <button className="border-b-2 border-indigo-600 py-3 text-indigo-600 px-1 whitespace-nowrap">
                         All Items ({cartData?.totalElements || 0})
                     </button>
-                    <button className="text-slate-400 py-3 px-1 hover:text-slate-600 whitespace-nowrap">Saved for Later</button>
                 </div>
 
                 {/* Empty State */}
@@ -151,7 +171,6 @@ export default function CartPageClient() {
                                 key={item.id}
                                 className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:shadow-md hover:border-slate-200"
                             >
-                                {/* Khối bên trái: Ảnh + Thông tin */}
                                 <div className="flex items-center gap-4 flex-1">
                                     <div className="relative w-28 h-20 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
                                         <Image
@@ -163,14 +182,16 @@ export default function CartPageClient() {
                                     </div>
 
                                     <div className="space-y-1 min-w-0">
-                                        <span className="text-[10px] tracking-wider uppercase text-slate-400 block font-semibold">
-                                            ID: {item.id.slice(0, 8).toUpperCase()}
-                                        </span>
                                         <h3 className="font-semibold text-slate-800 text-base truncate max-w-xs md:max-w-md">
                                             {item.product.title}
                                         </h3>
                                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-                                            <span className="font-medium text-slate-700">Editor: @{item.product.designerUsername}</span>
+                                            <Link
+                                                href={`/designer/${item.product.designerId}`}
+                                                className="font-medium text-slate-700 hover:underline hover:text-purple-500 hover:decoration-purple-500 hover:underline-offset-2 transition-all"
+                                            >
+                                                Designer: @{item.product.designerUsername}
+                                            </Link>
                                             <span className="text-slate-300">|</span>
                                             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {item.deliveryDays}d delivery</span>
                                             <span className="text-slate-300">|</span>
@@ -179,7 +200,6 @@ export default function CartPageClient() {
                                     </div>
                                 </div>
 
-                                {/* Khối bên phải: Badge, Giá & Hành động */}
                                 <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
                                     <div className="text-left sm:text-right space-y-1.5">
                                         <span className={`inline-block px-3 py-1 rounded-full text-[11px] uppercase tracking-wide ${getPackageBadgeClass(item.packageType)}`}>
@@ -235,6 +255,7 @@ export default function CartPageClient() {
                                 </div>
                             </div>
                         )}
+                        
                     </div>
                 )}
             </div>

@@ -1,7 +1,6 @@
 import {PageResponse} from "@/types/common/page";
-import {CartItemResponse} from "@/types/cart";
+import {AddCartItemResponse, CartItemResponse} from "@/types/cart";
 import api from "@/lib/api";
-import {AddProductRequest} from "@/types/product";
 
 export const cartService = {
     getCarts: async (page: number, size: number): Promise<PageResponse<CartItemResponse>> => {
@@ -13,15 +12,12 @@ export const cartService = {
         });
         return res.data;
     },
-    addCartItem: async (serviceId: string): Promise<CartItemResponse> => {
+    addCartItem: async (serviceId: string): Promise<AddCartItemResponse> => {
         const res = await api.post(`/carts/add`, serviceId);
         return res.data
     },
-    updateCartItem: async (oldServiceId: string, newServiceId: string): Promise<CartItemResponse> => {
-        const res = await api.put(`/carts/update`, {
-            oldServiceId: oldServiceId, 
-            newServiceId: newServiceId,
-        });
+    countCartItems: async (): Promise<number> => {
+        const res = await api.get(`/carts/count`);
         return res.data
     },
     deleteCartItem: async (serviceId: string): Promise<Boolean> => {

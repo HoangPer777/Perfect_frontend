@@ -12,7 +12,6 @@ export default function AddProductPage() {
                     </button>
                     <h2 className="text-lg font-bold text-slate-700">Add New Product to Bio</h2>
                     <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-orange-100 border border-orange-200" />
                     </div>
                 </header>
 

@@ -10,20 +10,50 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/pagination';
 import { ProductResponse } from "@/types/product";
+import { ServicePackageResponse } from "@/types/service";
+import ServicePackageList from "@/components/service-packages/ServicePackageList";
+import {cartService} from "@/services/cart/cart.service";
+import {useCartStore} from "@/store/cartStore";
+import {useAuthStore} from "@/store/authStore";
 
 interface Props {
     product: ProductResponse;
+    servicePackages: ServicePackageResponse[]; 
 }
 
-export default function ProductDetailContent({ product }: Props) {
+export default function ProductDetailContent({ product, servicePackages }: Props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
-    const [activeIndex, setActiveIndex] = useState<number>(0); // Quản lý viền tím đồng bộ
-
-    // Fallback nếu danh sách images rỗng thì dùng tạm thumbnailUrl
+    const [activeIndex, setActiveIndex] = useState<number>(0);
+    const {incrementCount} = useCartStore();
+    const {user} = useAuthStore();
+    
     const displayImages = product.images && product.images.length > 0
         ? product.images.map(img => img.url)
         : [product.thumbnailUrl];
+
+    const handleAddToCart = async (pkg: ServicePackageResponse) => {
+        if(!user) {
+            alert(`Vui lòng đăng nhập!`);
+            return;
+        }
+            
+        const res = await cartService.addCartItem(pkg.id)
+        if (res.success) {
+            incrementCount()
+        }
+        
+        if (res.exists) {
+            alert(`Đã thêm gói "${pkg.title}" vào giỏ hàng!`);
+        } else {
+            alert(`Đã có lỗi khi thêm gói "${pkg.title}" vào giỏ hàng!`);
+        }
+    };
+
+    const handleOrderNow = (pkg: ServicePackageResponse) => {
+        console.log("Mua ngay:", pkg);
+        alert(`Đang tiến hành đặt hàng gói "${pkg.title}"`);
+    };
 
     return (
         <div className="max-w-5xl mx-auto p-4 md:p-12 bg-[#F6F7FA] min-h-screen font-sans text-[#1A1A1A] antialiased">
@@ -99,7 +129,7 @@ export default function ProductDetailContent({ product }: Props) {
                             thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                             modules={[FreeMode, Navigation, Thumbs, Pagination]}
                             pagination={{ clickable: true, dynamicBullets: true }}
-                            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Cập nhật vị trí khi vuốt ảnh lớn
+                            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
                             className="w-full h-full"
                         >
                             {displayImages.map((imgUrl, index) => (
@@ -112,7 +142,6 @@ export default function ProductDetailContent({ product }: Props) {
                         <button className="custom-next absolute right-5 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md p-2.5 rounded-full shadow-md text-gray-700 hover:bg-white transition opacity-0 group-hover:opacity-100"><ChevronRight size={16} /></button>
                     </div>
 
-                    {/* Thumbnails Swiper (Chỉ hiện khi có nhiều hơn 1 ảnh) */}
                     {displayImages.length > 1 && (
                         <div className="w-full overflow-hidden">
                             <Swiper
@@ -149,6 +178,22 @@ export default function ProductDetailContent({ product }: Props) {
                     <p className="text-base md:text-lg text-gray-500/90 leading-relaxed font-light whitespace-pre-line">
                         {product.description}
                     </p>
+                </div>
+
+                <hr className="border-gray-100" />
+
+                {/* SERVICE PACKAGES */}
+                <div className="space-y-6 pt-2">
+                    <div>
+                        <h2 className="text-xl font-bold text-[#0F172A] tracking-tight">Select Your Package</h2>
+                        <p className="text-xs text-gray-400 mt-1">Tailored editing solutions for professional creators.</p>
+                    </div>
+
+                    <ServicePackageList
+                        services={servicePackages}
+                        onAddToCart={handleAddToCart}
+                        onOrderNow={handleOrderNow}
+                    />
                 </div>
 
                 <hr className="border-gray-100" />
