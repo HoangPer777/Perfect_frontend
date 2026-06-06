@@ -1,6 +1,7 @@
 import { productService } from "@/services/products/product.service";
 import { Metadata } from "next";
 import ProductDetailContent from "@/components/products/ProductDetailContent";
+import {servicePackageService} from "@/services/service-package/service-package.service";
 
 interface Props {
     params: { id: string };
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
     try {
         const product = await productService.getProductDetail(params.id);
-
+        const services = await servicePackageService.getAllServicePackagesByProductId(params.id);
+        
         if (!product) {
             return (
                 <div className="max-w-5xl mx-auto p-12 text-center text-red-500 font-medium">
@@ -37,7 +39,7 @@ export default async function Page({ params }: Props) {
             );
         }
 
-        return <ProductDetailContent product={product} />;
+        return <ProductDetailContent product={product} servicePackages={services}/>;
 
     } catch (error) {
         console.error("Lỗi xảy ra tại Server Component khi fetch data:", error);

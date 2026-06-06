@@ -60,7 +60,7 @@ export default function EditProductPage() {
                         ← Back
                     </button>
                     <h2 className="text-lg font-bold text-slate-700">Edit Product Blueprint</h2>
-                    <div className="w-8 h-8 rounded-full bg-orange-100" />
+                    <div />
                 </header>
 
                 <div className="p-10 max-w-4xl mx-auto w-full overflow-y-auto">
