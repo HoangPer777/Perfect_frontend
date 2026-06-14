@@ -51,5 +51,9 @@ export const productService = {
     getProductByDesignerIdAndProductId: async (id: string): Promise<AddProductResponse> => {
         const res = await api.get(`/designer/products/${id}`);
         return res.data
+    },
+    getMyProducts: async (): Promise<AddProductResponse[]> => {
+        const res = await api.get("/products/my-products");
+        return res.data
     }
 };
