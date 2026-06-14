@@ -13,15 +13,14 @@ import {useCartStore} from "@/store/cartStore";
 
 export default function CartPage() {
     const router = useRouter();
-    const searchParams = useSearchParams();
     const { user } = useAuthStore();
     const [cartData, setCartData] = useState<PageResponse<CartItemResponse> | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const { decrementCount } = useCartStore();
 
-    const currentPage = Number(searchParams.get('page')) || 1;
     const size = 10;
 
     useEffect(() => {
@@ -47,6 +46,12 @@ export default function CartPage() {
     }, [user, router]);
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const pageFromUrl = Number(params.get('page')) || 1;
+        setCurrentPage(pageFromUrl);
+    }, [router]);
+
+    useEffect(() => {
         if (!isAuthChecked || !user) return;
 
         const loadCartData = async () => {
@@ -70,6 +75,7 @@ export default function CartPage() {
     const handlePageChange = (newPage: number) => {
         if (!cartData || newPage < 1 || newPage > cartData.totalPages) return;
         router.push(`/cart?page=${newPage}`);
+        setCurrentPage(newPage);
     };
 
     // Xử lý xóa item
