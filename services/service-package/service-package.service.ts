@@ -11,8 +11,8 @@ export const servicePackageService = {
         return res.data
     },
 
-    getMyPackages: async (): Promise<ServicePackageResponse[]> => {
-        const res = await api.get("/services/my-packages")
+    getMyPackages: async (productId: string): Promise<ServicePackageResponse[]> => {
+        const res = await api.get(`/services/my-packages/${productId}`)
         return res.data
     },
 

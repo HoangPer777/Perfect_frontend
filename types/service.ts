@@ -2,13 +2,14 @@ export interface ServicePackageResponse {
     id: string;
     title: string;
     description: string; 
-    packageType: string;
+    packageType: 'BASIC' | 'PRO' | 'VIP' | 'CUSTOM';
     price: number;
     deliveryDays: number;
     revisionsLimit: number;
 }
 
 export interface CreateServicePackageRequest {
+    productId: string;
     title: string;
     description: string;
     packageType: 'BASIC' | 'PRO' | 'VIP' | 'CUSTOM';

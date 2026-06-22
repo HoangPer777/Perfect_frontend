@@ -2,8 +2,7 @@
 
 import React from "react";
 import { CheckCircle2, ShoppingCart, Zap } from "lucide-react";
-import {ServicePackageResponse} from "@/types/service";
-
+import { ServicePackageResponse } from "@/types/service";
 
 interface ServicePackageListProps {
     services: ServicePackageResponse[];
@@ -12,10 +11,25 @@ interface ServicePackageListProps {
 }
 
 export default function ServicePackageList({ services, onAddToCart, onOrderNow }: ServicePackageListProps) {
+
+    // Hàm Helper trả về màu sắc Badge tương ứng cho từng loại Package Type (Tone tím/slate/amber)
+    const getTierBadgeStyles = (type: ServicePackageResponse['packageType']) => {
+        switch (type?.toUpperCase()) {
+            case 'BASIC':
+                return 'bg-slate-50 text-slate-600 border-slate-200';
+            case 'PRO':
+                return 'bg-purple-50 text-purple-600 border-purple-100';
+            case 'VIP':
+                return 'bg-amber-50 text-amber-700 border-amber-200';
+            default:
+                return 'bg-purple-50 text-purple-600 border-purple-100';
+        }
+    };
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto p-4">
             {services.map((pkg) => {
-                const isRecommended = pkg.packageType?.toUpperCase() === "STANDARD";
+                const isRecommended = pkg.packageType?.toUpperCase() === "PRO";
 
                 return (
                     <div
@@ -26,60 +40,70 @@ export default function ServicePackageList({ services, onAddToCart, onOrderNow }
                             : "border-gray-200 shadow-sm hover:shadow-md"
                         }`}
                     >
-                        {/* Nhãn Recommended */}
+                        {/* Recommended Badge Alert */}
                         {isRecommended && (
-                            <div className="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold tracking-wider px-4 py-1 rounded-full uppercase shadow-md">
+                            <div className="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold tracking-wider px-4 py-1 rounded-full uppercase shadow-md">
                                 Recommended
                             </div>
                         )}
 
                         <div>
-                            {/* Tiêu đề gói & Giá */}
-                            <div className="flex justify-between items-start mb-2">
+                            {/* Title & Package Type Badge */}
+                            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                                 <h3 className="text-xl font-bold text-gray-800 capitalize">
                                     {pkg.title}
                                 </h3>
+
+                                {/* DISPLAY PACKAGE TYPE BADGE */}
+                                <span className={`text-[10px] font-bold px-2.5 py-0.5 border rounded-full uppercase tracking-wider ${getTierBadgeStyles(pkg.packageType)}`}>
+                                    {pkg.packageType}
+                                </span>
                             </div>
 
+                            {/* Dynamic Price */}
                             <div className="text-3xl font-black text-purple-700 my-3">
                                 ${pkg.price}
                             </div>
 
-                            {/* Mô tả ngắn */}
+                            {/* Description */}
                             <p className="text-sm text-gray-500 mb-4 min-h-[45px] leading-relaxed">
                                 {pkg.description}
                             </p>
 
                             <hr className="border-gray-100 my-4" />
 
-                            {/* Danh sách tính năng đi kèm */}
+                            {/* Feature Checklist (English) */}
                             <ul className="space-y-3 mb-6">
                                 <li className="flex items-center text-sm text-gray-600 gap-2">
                                     <CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0" />
-                                    <span>{pkg.revisionsLimit} lần sửa đổi</span>
+                                    <span>{pkg.revisionsLimit} {pkg.revisionsLimit === 1 ? 'Revision' : 'Revisions'} Included</span>
                                 </li>
                                 <li className="flex items-center text-sm text-gray-600 gap-2">
                                     <CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0" />
-                                    <span>Giao hàng trong {pkg.deliveryDays} ngày</span>
+                                    <span>{pkg.deliveryDays} {pkg.deliveryDays === 1 ? 'Day' : 'Days'} Delivery Time</span>
                                 </li>
                             </ul>
                         </div>
 
+                        {/* Action Row */}
                         <div className="flex gap-2 mt-4">
                             <button
                                 onClick={() => onAddToCart(pkg)}
-                                title="Thêm vào giỏ hàng"
-                                className="p-3 rounded-xl border border-purple-200 text-purple-600 hover:bg-purple-50 transition-colors duration-200 flex items-center justify-center"
+                                title="Add to Cart"
+                                className="p-3 rounded-xl border border-purple-100 text-purple-600 hover:bg-purple-50 active:scale-95 transition-all flex items-center justify-center shadow-xs"
                             >
                                 <ShoppingCart className="w-5 h-5"/>
                             </button>
 
                             <button
-                                className={`flex-1 py-3 px-4 rounded-xl font-medium text-xs flex items-center justify-center gap-1.5 border transition-all duration-200 active:scale-[0.98]
-                                            border-purple-400 text-purple-600 hover:bg-purple-50 shadow-xs shadow-purple-50/50
-                               `}
+                                onClick={() => onOrderNow(pkg)}
+                                className={`flex-1 py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 border transition-all duration-200 active:scale-[0.97]
+                                    ${isRecommended
+                                    ? 'bg-purple-600 hover:bg-purple-700 text-white border-transparent shadow-md shadow-purple-100'
+                                    : 'border-purple-200 text-purple-600 hover:bg-purple-50 bg-white'
+                                }`}
                             >
-                                <Zap size={13} className={"text-purple-500"}/>
+                                <Zap size={13} className={isRecommended ? "text-purple-200 fill-purple-200" : "text-purple-500"}/>
                                 Order Now
                             </button>
                         </div>
