@@ -2,16 +2,17 @@
 
 import { useState } from 'react';
 import ProductGrid from "@/components/products/DesignerProducts";
-import { Layers, FolderHeart, LayoutGrid } from 'lucide-react';
+import {Layers, LayoutGrid, ShoppingBag} from 'lucide-react';
+import DesignerOverview from "@/components/designer/Overview";
 
-type TabType = 'Overview' | 'Portfolio' | 'Products';
+type TabType = 'Overview' | 'Orders' | 'Products';
 
 export default function DesignerPage() {
-    const [activeTab, setActiveTab] = useState<TabType>('Products');
+    const [activeTab, setActiveTab] = useState<TabType>('Overview');
 
     const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
         { id: 'Overview', label: 'Overview', icon: <Layers size={16} /> },
-        { id: 'Portfolio', label: 'Portfolio', icon: <FolderHeart size={16} /> },
+        { id: 'Orders', label: 'Orders', icon: <ShoppingBag size={16} /> },
         { id: 'Products', label: 'Products', icon: <LayoutGrid size={16} /> },
     ];
 
@@ -45,7 +46,7 @@ export default function DesignerPage() {
                 <div className="w-full transition-all duration-300">
                     {activeTab === 'Products' ? (
                         <ProductGrid />
-                    ) : (
+                    ) : activeTab === 'Overview' ? <DesignerOverview /> : (
                         /* Placeholder style for upcoming tabs */
                         <div className="w-full min-h-[400px] bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center p-8">
                             <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mb-4">
