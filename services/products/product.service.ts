@@ -1,5 +1,11 @@
 import api from "@/lib/api";
-import {AddProductRequest, AddProductResponse, CardProductResponse, ProductResponse} from "@/types/product";
+import {
+    AddProductRequest,
+    AddProductResponse,
+    CardProductResponse,
+    ProductResponse,
+    SnapshotProductResponse
+} from "@/types/product";
 import {Category} from "@/types/category";
 import {CardDesignerResponse} from "@/types/designer";
 
@@ -52,7 +58,7 @@ export const productService = {
         const res = await api.get(`/designer/products/${id}`);
         return res.data
     },
-    getMyProducts: async (): Promise<AddProductResponse[]> => {
+    getMyProducts: async (): Promise<SnapshotProductResponse[]> => {
         const res = await api.get("/products/my-products");
         return res.data
     }

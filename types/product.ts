@@ -65,3 +65,13 @@ export interface AddProductResponse {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface SnapshotProductResponse {
+    id: string;
+    title: string;
+    thumbnailUrl: string;
+    status: string;
+    viewCount: number;
+    soldCount: number;
+    createdAt: string | Date; 
+}
