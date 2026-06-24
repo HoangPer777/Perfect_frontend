@@ -1,14 +1,17 @@
+"use client"
 import ProductForm from "@/components/products/ProductForm";
 import UploadBox from "@/components/products/UploadBox";
+import {useRouter} from "next/navigation";
 
 export default function AddProductPage() {
+    const router = useRouter();
     return (
         <div className="flex min-h-screen bg-[#f8faff]">
             <main className="flex-1 flex flex-col">
                 {/* Top Header */}
                 <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8">
-                    <button className="text-sm text-gray-500 hover:text-violet-600 transition-colors">
-                        ← Back to Profile
+                    <button className="text-sm text-gray-500 hover:text-violet-600 transition-colors" onClick={router.back}>
+                        ← Back
                     </button>
                     <h2 className="text-lg font-bold text-slate-700">Add New Product to Bio</h2>
                     <div className="flex items-center gap-4">
