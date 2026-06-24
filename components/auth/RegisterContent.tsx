@@ -50,7 +50,65 @@ export default function RegisterContent() {
     window.location.href = `${backendUrl}/oauth2/authorization/${provider}`;
   };
 
+  const [otp, setOtp] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpSuccess, setOtpSuccess] = useState(false);
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setOtpLoading(true);
+    setOtpError(null);
+    try {
+      await authService.verifyEmail(otp);
+      setOtpSuccess(true);
+    } catch (err: any) {
+      console.error(err);
+      const errorData = err.response?.data;
+      const errorMessage = errorData?.message || errorData?.error || "Xác thực mã OTP thất bại. Vui lòng kiểm tra lại.";
+      setOtpError(errorMessage);
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setOtpError(null);
+    try {
+      await authService.resendVerification(email);
+      alert("Đã gửi lại mã OTP mới đến email của bạn.");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || "Không thể gửi lại mã OTP.");
+    }
+  };
+
   if (isSuccess) {
+    if (otpSuccess) {
+      return (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-[440px] p-10 bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center text-center"
+        >
+          <div className="w-[60px] h-[60px] rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mb-6 shadow-inner animate-bounce">
+            <Mail className="w-6 h-6" />
+          </div>
+          <h1 className="text-[28px] font-bold text-[#1f2937] mb-3 tracking-tight">Kích hoạt thành công!</h1>
+          <p className="text-[#6b7280] mb-8 text-[15px] leading-relaxed">
+            Tài khoản của bạn đã được kích hoạt thành công. Hãy quay lại đăng nhập để bắt đầu.
+          </p>
+          <Link 
+            href="/login" 
+            className="w-full h-[54px] rounded-[18px] bg-gradient-to-r from-[#4f6d7a] to-[#6b5b95] text-white text-[15px] font-bold flex items-center justify-center shadow-lg shadow-[#6b5b95]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            Đăng nhập ngay
+          </Link>
+        </motion.div>
+      );
+    }
+
     return (
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
@@ -61,16 +119,41 @@ export default function RegisterContent() {
         <div className="w-[60px] h-[60px] rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mb-6 shadow-inner">
           <Mail className="w-6 h-6" />
         </div>
-        <h1 className="text-[28px] font-bold text-[#1f2937] mb-3 tracking-tight">Verify your email</h1>
+        <h1 className="text-[28px] font-bold text-[#1f2937] mb-3 tracking-tight">Nhập mã xác minh</h1>
         <p className="text-[#6b7280] mb-8 text-[15px] leading-relaxed">
-          We've sent a verification link to <span className="font-semibold text-gray-800">{email}</span>. Please click the link to activate your account.
+          Chúng tôi đã gửi mã xác minh 6 chữ số đến <span className="font-semibold text-gray-800">{email}</span>.
         </p>
-        <Link 
-          href="/login" 
-          className="w-full h-[54px] rounded-[18px] bg-gradient-to-r from-[#4f6d7a] to-[#6b5b95] text-white text-[15px] font-bold flex items-center justify-center shadow-lg shadow-[#6b5b95]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+
+        {otpError && (
+          <div className="w-full p-3 mb-6 text-sm text-red-500 bg-red-50 rounded-xl border border-red-100">
+            {otpError}
+          </div>
+        )}
+
+        <form onSubmit={handleVerifyOtp} className="w-full space-y-5">
+          <input 
+            type="text"
+            required
+            maxLength={6}
+            placeholder="123456"
+            className="w-full h-[50px] text-center tracking-[0.5em] text-2xl font-bold rounded-[16px] bg-[#f3f4f6] border-none focus:ring-2 focus:ring-[#6b5b95]/20 focus:bg-white transition-all placeholder:tracking-normal placeholder:font-normal placeholder:text-base placeholder:text-[#9ca3af]"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+          />
+          <button 
+            disabled={otpLoading}
+            className="w-full h-[54px] rounded-[18px] bg-gradient-to-r from-[#4f6d7a] to-[#6b5b95] text-white text-[15px] font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#6b5b95]/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 disabled:scale-100"
+          >
+            {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Xác minh tài khoản"}
+          </button>
+        </form>
+
+        <button 
+          onClick={handleResendOtp}
+          className="mt-6 text-sm font-bold text-[#4f6d7a] hover:underline"
         >
-          Go to Login
-        </Link>
+          Gửi lại mã OTP
+        </button>
       </motion.div>
     );
   }

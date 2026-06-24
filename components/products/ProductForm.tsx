@@ -2,6 +2,7 @@
 
 import { useProductStore } from "@/store/addProductStore";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { cloudinary } from "@/services/cloudinary/upload.service";
 import { productService } from "@/services/products/product.service";
 import { Category } from "@/types/category";
@@ -15,6 +16,7 @@ interface ProductFormProps {
 }
 
 export default function ProductForm({ isEditMode = false, initialData, onDeleteSuccess, onSaveSuccess }: ProductFormProps) {
+    const router = useRouter();
     const { title, description, previews, thumbnailId, categories, status, toggleCategory, setField, resetForm } = useProductStore();
     const [loading, setLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -265,14 +267,23 @@ export default function ProductForm({ isEditMode = false, initialData, onDeleteS
             <div className="flex justify-between items-center pt-6 border-t border-gray-100">
                 {isEditMode ? (
                     <>
-                        <button
-                            type="button"
-                            disabled={loading || isDeleting}
-                            onClick={handleDeleteProduct}
-                            className="px-6 py-3 bg-red-50 text-red-500 rounded-full font-semibold text-sm hover:bg-red-100 transition disabled:opacity-50"
-                        >
-                            {isDeleting ? "Deleting..." : "Delete Product"}
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={() => router.push("/designer")}
+                                className="px-6 py-3 border border-gray-200 text-gray-500 hover:bg-gray-50 rounded-full font-semibold text-sm transition-colors"
+                            >
+                                Quay lại Dashboard
+                            </button>
+                            <button
+                                type="button"
+                                disabled={loading || isDeleting}
+                                onClick={handleDeleteProduct}
+                                className="px-6 py-3 bg-red-50 text-red-500 rounded-full font-semibold text-sm hover:bg-red-100 transition disabled:opacity-50"
+                            >
+                                {isDeleting ? "Deleting..." : "Delete Product"}
+                            </button>
+                        </div>
 
                         <div className="flex gap-2.5">
                             <button
@@ -295,6 +306,13 @@ export default function ProductForm({ isEditMode = false, initialData, onDeleteS
                     </>
                 ) : (
                     <>
+                        <button
+                            type="button"
+                            onClick={() => router.push("/designer")}
+                            className="px-6 py-3 border border-gray-200 text-gray-500 hover:bg-gray-50 rounded-full font-semibold text-sm transition-colors"
+                        >
+                            Quay lại Dashboard
+                        </button>
                         <div className="ml-auto">
                             <button
                                 type="button"

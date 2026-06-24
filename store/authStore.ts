@@ -5,13 +5,19 @@ interface User {
   id: string;
   email: string;
   username: string;
-  role: "CUSTOMER" | "DESIGNER" | "ADMIN";
+  role: "CUSTOMER" | "DESIGNER" | "ADMIN" | "ROLE_CUSTOMER" | "ROLE_DESIGNER" | "ROLE_ADMIN";
   fullName?: string;
   avatarUrl?: string;
   city?: string;
   detailedAddress?: string;
   emailNotifications?: boolean;
   promotionalOffers?: boolean;
+  provider?: "LOCAL" | "GOOGLE" | "FACEBOOK";
+  specialization?: string;
+  bio?: string;
+  portfolioUrl?: string;
+  skills?: string;
+  experienceYears?: number;
 }
 
 interface AuthState {

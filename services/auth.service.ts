@@ -26,6 +26,7 @@ export interface AuthResponse {
     detailedAddress?: string;
     emailNotifications?: boolean;
     promotionalOffers?: boolean;
+    provider?: string;
   };
 }
 
@@ -80,6 +81,27 @@ export const authService = {
     promotionalOffers?: boolean;
   }) => {
     const response = await api.patch<AuthResponse["user"]>("/auth/profile", data);
+    return response.data;
+  },
+
+  changePassword: async (data: any) => {
+    const response = await api.post("/auth/change-password", data);
+    return response.data;
+  },
+
+  upgradeToDesigner: async (data: {
+    specialization: string;
+    bio: string;
+    portfolioUrl: string;
+    skills: string;
+    experienceYears: number;
+  }) => {
+    const response = await api.post("/auth/upgrade-designer", data);
+    return response.data;
+  },
+
+  getPurchasedTasks: async () => {
+    const response = await api.get("/tasks/customer");
     return response.data;
   },
 };
