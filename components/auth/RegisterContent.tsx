@@ -21,6 +21,7 @@ export default function RegisterContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,20 +33,10 @@ export default function RegisterContent() {
     setLoading(true);
     setError(null);
     try {
-      const response = await authService.register({ fullName, email, password, role });
-      
-      const user = {
-        id: response.user.id,
-        email: response.user.email,
-        username: response.user.username,
-        role: response.user.roles[0] as any,
-      };
-      setAuth(user, response.accessToken);
-      
-      router.push("/");
+      await authService.register({ fullName, email, password, role });
+      setIsSuccess(true);
     } catch (err: any) {
       console.error("Registration Error:", err.response?.data || err.message);
-      // Backend may return error in 'message' or 'error' field
       const errorData = err.response?.data;
       const errorMessage = errorData?.message || errorData?.error || "Registration failed. Please try again.";
       setError(errorMessage);
@@ -58,6 +49,31 @@ export default function RegisterContent() {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || "http://localhost:8080";
     window.location.href = `${backendUrl}/oauth2/authorization/${provider}`;
   };
+
+  if (isSuccess) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-[440px] p-10 bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-gray-50 flex flex-col items-center text-center"
+      >
+        <div className="w-[60px] h-[60px] rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mb-6 shadow-inner">
+          <Mail className="w-6 h-6" />
+        </div>
+        <h1 className="text-[28px] font-bold text-[#1f2937] mb-3 tracking-tight">Verify your email</h1>
+        <p className="text-[#6b7280] mb-8 text-[15px] leading-relaxed">
+          We've sent a verification link to <span className="font-semibold text-gray-800">{email}</span>. Please click the link to activate your account.
+        </p>
+        <Link 
+          href="/login" 
+          className="w-full h-[54px] rounded-[18px] bg-gradient-to-r from-[#4f6d7a] to-[#6b5b95] text-white text-[15px] font-bold flex items-center justify-center shadow-lg shadow-[#6b5b95]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+        >
+          Go to Login
+        </Link>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div 

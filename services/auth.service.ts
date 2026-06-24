@@ -22,6 +22,10 @@ export interface AuthResponse {
     username: string;
     avatarUrl: string;
     roles: string[];
+    city?: string;
+    detailedAddress?: string;
+    emailNotifications?: boolean;
+    promotionalOffers?: boolean;
   };
 }
 
@@ -53,6 +57,29 @@ export const authService = {
   
   resetPassword: async (data: { token: string; newPassword: string }) => {
     const response = await api.post("/auth/reset-password", data);
+    return response.data;
+  },
+
+  verifyEmail: async (token: string) => {
+    const response = await api.post("/auth/verify-email", { token });
+    return response.data;
+  },
+
+  resendVerification: async (email: string) => {
+    const response = await api.post("/auth/resend-verification", { email });
+    return response.data;
+  },
+
+  updateProfile: async (data: {
+    fullName: string;
+    username: string;
+    avatarUrl: string;
+    city?: string;
+    detailedAddress?: string;
+    emailNotifications?: boolean;
+    promotionalOffers?: boolean;
+  }) => {
+    const response = await api.patch<AuthResponse["user"]>("/auth/profile", data);
     return response.data;
   },
 };
