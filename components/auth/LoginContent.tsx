@@ -68,8 +68,8 @@ export default function LoginContent() {
         <Grid className="text-white w-6 h-6" />
       </div>
 
-      <h1 className="text-[32px] font-bold text-[#1f2937] mb-2 tracking-tight">Welcome back</h1>
-      <p className="text-[#6b7280] mb-10 text-center text-[15px]">Step back into your digital atelier.</p>
+      <h1 className="text-[32px] font-bold text-[#1f2937] mb-2 tracking-tight">Chào mừng quay lại</h1>
+      <p className="text-[#6b7280] mb-10 text-center text-[15px]">Đăng nhập để quản lý dự án và các dịch vụ của bạn.</p>
 
       {error && (
         <div className="w-full p-3 mb-6 text-sm text-red-500 bg-red-50 rounded-xl border border-red-100 animate-in fade-in slide-in-from-top-1">
@@ -79,7 +79,7 @@ export default function LoginContent() {
 
       <form onSubmit={handleSubmit} className="w-full space-y-6">
         <div className="space-y-2">
-          <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#9ca3af] ml-1">Email Address</label>
+          <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#9ca3af] ml-1">Địa chỉ Email</label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#9ca3af]" />
             <input 
@@ -95,9 +95,9 @@ export default function LoginContent() {
 
         <div className="space-y-2">
           <div className="flex justify-between items-center px-1">
-            <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#9ca3af]">Password</label>
-            <Link href="/forgot-password" title="Forgot Password" className="text-[11px] font-bold text-[#6b5b95] hover:opacity-80 transition-opacity">
-              Forgot password?
+            <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#9ca3af]">Mật khẩu</label>
+            <Link href="/forgot-password" title="Forgot Password" className="text-xs font-bold text-[#6b5b95] hover:opacity-80 transition-opacity">
+              Quên mật khẩu?
             </Link>
           </div>
           <div className="relative">
@@ -124,13 +124,13 @@ export default function LoginContent() {
           disabled={loading}
           className="w-full h-[60px] rounded-[20px] bg-gradient-to-r from-[#4f6d7a] to-[#6b5b95] text-white text-[16px] font-bold flex items-center justify-center gap-2 mt-4 shadow-lg shadow-[#6b5b95]/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 disabled:scale-100"
         >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Log in →"}
+          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Đăng nhập →"}
         </button>
       </form>
 
       <div className="w-full flex items-center gap-4 my-10">
         <div className="h-[1px] flex-1 bg-gray-100"></div>
-        <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-[#d1d5db]">Or</span>
+        <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-[#d1d5db]">Hoặc đăng nhập bằng</span>
         <div className="h-[1px] flex-1 bg-gray-100"></div>
       </div>
 
@@ -152,9 +152,9 @@ export default function LoginContent() {
       </div>
 
       <p className="mt-12 text-center text-[14px] text-[#6b7280]">
-        New to the gallery?{" "}
+        Bạn chưa có tài khoản?{" "}
         <Link href="/register" className="font-bold text-[#4f6d7a] hover:underline underline-offset-4 decoration-2">
-          Create account
+          Đăng ký ngay
         </Link>
       </p>
     </motion.div>
