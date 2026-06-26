@@ -13,7 +13,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { DesignerChartResponse } from "@/types/chart";
 import {taskService} from "@/services/order/task.service";
-import {notFound} from "next/navigation";
+import {notFound, useRouter} from "next/navigation";
 
 type TimeRangeType = 'This Week' | 'This Month' | 'This Year';
 const PIE_COLORS = ['#8b5cf6', '#a78bfa', '#ddd6fe', '#e0f2fe', '#c084fc', '#6366f1'];
@@ -47,7 +47,7 @@ export default function DesignerOverview() {
     const [timeRange, setTimeRange] = useState<TimeRangeType>('This Week');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-
+    const router = useRouter()
     const [allChartData, setAllChartData] = useState<DesignerChartResponse | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -59,7 +59,7 @@ export default function DesignerOverview() {
                 const data = await taskService.getDesignerChart();
                 setAllChartData(data);
             } catch (error) {
-                notFound();
+                router.push(`/`)
             } finally {
                 setIsLoading(false);
             }
