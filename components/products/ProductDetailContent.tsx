@@ -10,6 +10,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/pagination';
 import { ProductResponse } from "@/types/product";
+import {useRouter} from "next/navigation";
+import {cartService} from "@/services/cart/cart.service";
 
 interface Props {
     product: ProductResponse;
@@ -18,8 +20,22 @@ interface Props {
 export default function ProductDetailContent({ product }: Props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
-    const [activeIndex, setActiveIndex] = useState<number>(0); // Quản lý viền tím đồng bộ
+    const [activeIndex, setActiveIndex] = useState<number>(0);
+    const router = useRouter();
+    const handleOrderNow = async () => {
+        try {
+            await cartService.addToCart({
+                productId: product.id,
+                quantity: 1
+            });
 
+            // Điều hướng sang trang giỏ hàng
+            router.push("/cart");
+        } catch (error) {
+            console.error("Lỗi thêm vào giỏ:", error);
+            alert("Vui lòng đăng nhập để thực hiện tính năng này!");
+        }
+    };
     // Fallback nếu danh sách images rỗng thì dùng tạm thumbnailUrl
     const displayImages = product.images && product.images.length > 0
         ? product.images.map(img => img.url)
@@ -72,7 +88,7 @@ export default function ProductDetailContent({ product }: Props) {
                         Contact Designer
                     </button>
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={handleOrderNow} // Gọi hàm xử lý giỏ hàng
                         className="bg-gradient-to-r from-[#7C3AED] to-[#A855F7] hover:from-[#6D28D9] hover:to-[#9333EA] text-white px-6 py-3 rounded-full text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
                     >
                         Order now
@@ -157,7 +173,7 @@ export default function ProductDetailContent({ product }: Props) {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-2">
                     <div className="flex flex-wrap items-center gap-3 order-2 md:order-1">
                         <button
-                            onClick={() => setIsModalOpen(true)}
+                            onClick={handleOrderNow}
                             className="px-6 py-3.5 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] hover:from-[#6D28D9] hover:to-[#9333EA] text-white rounded-[20px] text-xs font-bold shadow-md shadow-purple-100 transition-all active:scale-[0.99]"
                         >
                             Order now
@@ -169,10 +185,10 @@ export default function ProductDetailContent({ product }: Props) {
                     </div>
 
                     <div className="flex flex-wrap gap-2 order-1 md:order-2 md:justify-end">
-                        {product.categories.map((tag) => (
+                        {(product.categories || []).map((tag) => (
                             <span key={tag.id} className="px-4 py-2 bg-[#F1F3F6] text-gray-600 rounded-full text-xs font-semibold">
-                                {tag.name}
-                            </span>
+        {tag.name}
+    </span>
                         ))}
                     </div>
                 </div>

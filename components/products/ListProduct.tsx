@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import CardProduct from "./CardProduct";
+import { CardProduct } from "./CardProduct";
 import {useEffect, useState} from "react";
 import {productService} from "@/services/products/product.service";
 import {CardProductResponse} from "@/types/product";
@@ -56,7 +56,7 @@ export default function ListProduct() {
                 >
                     {mostViewedProducts.map((product) => (
                         <SwiperItem key={product.id}>
-                            <CardProduct {...product} />
+                            <CardProduct product={product} />
                         </SwiperItem>
                     ))}
                 </SwiperContainer>
@@ -81,9 +81,9 @@ export default function ListProduct() {
                     }}
                     className="!pb-8 swiper-custom-nav"
                 >
-                    {newestProducts.reverse().map((product) => (
+                    {newestProducts.map((product) => (
                         <SwiperItem key={`new-${product.id}`}>
-                            <CardProduct {...product} />
+                            <CardProduct product={product} />
                         </SwiperItem>
                     ))}
                 </SwiperContainer>
