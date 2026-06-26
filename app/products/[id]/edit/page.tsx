@@ -56,11 +56,11 @@ export default function EditProductPage() {
         <div className="flex min-h-screen bg-[#f8faff]">
             <main className="flex-1 flex flex-col">
                 <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8">
-                    <button className="text-sm text-gray-500 hover:text-violet-600">
+                    <button className="text-sm text-gray-500 hover:text-violet-600" onClick={() => router.back()}>
                         ← Back
                     </button>
                     <h2 className="text-lg font-bold text-slate-700">Edit Product Blueprint</h2>
-                    <div className="w-8 h-8 rounded-full bg-orange-100" />
+                    <div />
                 </header>
 
                 <div className="p-10 max-w-4xl mx-auto w-full overflow-y-auto">

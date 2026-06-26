@@ -1,72 +1,65 @@
-export default function DesignerDashboard() {
-  return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Designer Dashboard</h1>
+'use client';
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        {/* Statistics Widgets */}
-        <div className="p-6 border rounded-xl bg-white shadow-sm">
-          <p className="text-muted-foreground text-sm font-medium">Total Products</p>
-          <p className="text-3xl font-bold">0</p>
-        </div>
-        <div className="p-6 border rounded-xl bg-white shadow-sm">
-          <p className="text-muted-foreground text-sm font-medium">Active Tasks</p>
-          <p className="text-3xl font-bold">0</p>
-        </div>
-        <div className="p-6 border rounded-xl bg-white shadow-sm">
-          <p className="text-muted-foreground text-sm font-medium">Total Revenue</p>
-          <p className="text-3xl font-bold">$0</p>
-        </div>
-        <div className="p-6 border rounded-xl bg-white shadow-sm">
-          <p className="text-muted-foreground text-sm font-medium">Trust Score</p>
-          <p className="text-3xl font-bold">N/A</p>
-        </div>
-      </div>
+import { useState } from 'react';
+import ProductGrid from "@/components/products/DesignerProducts";
+import {Layers, LayoutGrid, ShoppingBag} from 'lucide-react';
+import DesignerOverview from "@/components/designer/Overview";
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <section className="p-6 border rounded-xl bg-white">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">Manage Products</h2>
-            <button className="text-primary font-medium text-sm">+ Add New</button>
-          </div>
-          {/* TODO: Implement product list with Edit/Delete buttons */}
-          <p className="text-muted-foreground text-center py-12">No products found.</p>
-        </section>
+type TabType = 'Overview' | 'Orders' | 'Products';
 
-        <section className="p-6 border rounded-xl bg-white">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold">Manage Service Packages</h2>
-            <button className="text-primary font-medium text-sm">+ Add New</button>
-          </div>
-          {/* TODO: Implement basic, pro, vip packages management */}
-          <p className="text-muted-foreground text-center py-12">No packages configured.</p>
-        </section>
-      </div>
+export default function DesignerPage() {
+    const [activeTab, setActiveTab] = useState<TabType>('Overview');
 
-      <section className="mt-8 p-6 border rounded-xl bg-white">
-        <h2 className="text-xl font-bold mb-6">Active Tasks (Jobs)</h2>
-        {/* TODO: Implement Table with status: PENDING, PROCESSING, REVIEWING */}
-        <div className="border rounded-lg overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-muted text-sm font-medium">
-              <tr>
-                <th className="p-4">Customer</th>
-                <th className="p-4">Service</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* TODO: Map active tasks */}
-              <tr className="border-t">
-                <td colSpan={4} className="p-12 text-center text-muted-foreground">No active tasks found.</td>
-              </tr>
-            </tbody>
-          </table>
+    const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
+        { id: 'Overview', label: 'Overview', icon: <Layers size={16} /> },
+        { id: 'Orders', label: 'Orders', icon: <ShoppingBag size={16} /> },
+        { id: 'Products', label: 'Products', icon: <LayoutGrid size={16} /> },
+    ];
+
+    return (
+        <div className="min-h-screen bg-[#f8fafc] flex flex-col w-full">
+
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+                {/* MODERN TABS SYSTEM */}
+                <div className="flex gap-8 border-b border-gray-200 mb-8">
+                    {tabs.map((tab) => {
+                        const isActive = activeTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`pb-4 flex items-center gap-2 text-sm font-semibold tracking-wide transition-all duration-200 relative border-b-2
+                                    ${isActive
+                                    ? 'border-indigo-600 text-indigo-600'
+                                    : 'border-transparent text-gray-400 hover:text-gray-600'
+                                }`}
+                            >
+                                {tab.icon}
+                                {tab.label}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* CONDITIONAL RENDER PER TAB */}
+                <div className="w-full transition-all duration-300">
+                    {activeTab === 'Products' ? (
+                        <ProductGrid />
+                    ) : activeTab === 'Overview' ? <DesignerOverview /> : (
+                        /* Placeholder style for upcoming tabs */
+                        <div className="w-full min-h-[400px] bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center p-8">
+                            <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mb-4">
+                                {tabs.find(t => t.id === activeTab)?.icon}
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900">{activeTab} section is coming soon</h3>
+                            <p className="text-gray-400 text-sm max-w-xs mt-1">We are currently organizing this section to display analytics and rich metrics.</p>
+                        </div>
+                    )}
+                </div>
+
+            </main>
+
         </div>
-      </section>
-
-      {/* TODO: Add Analytics Chart component (Recharts) */}
-    </div>
-  );
+    );
 }
