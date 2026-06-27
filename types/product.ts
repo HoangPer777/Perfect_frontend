@@ -2,6 +2,7 @@ export interface AddProductRequest {
     id?: string;
     title: string;
     description: string;
+    price: number;
     thumbnailUrl: string;
     status: string;
     images: string[];
@@ -29,6 +30,7 @@ export interface ProductResponse {
     }
     title: string;
     description: string;
+    price: number;
     thumbnailUrl: string;
     viewCount: number;
     soldCount: number;
@@ -49,6 +51,7 @@ export interface AddProductResponse {
     id: string;
     title: string;
     description: string;
+    price: number;
     thumbnailUrl: string;
     status: string;
     viewCount: number;

@@ -61,9 +61,14 @@ export default function ProductDetailContent({ product, servicePackages }: Props
             {/* HEADER SECTION */}
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-[#0F172A] mb-3">
-                        {product.title}
-                    </h1>
+                    <div className="flex flex-wrap items-center gap-4 mb-3">
+                        <h1 className="text-3xl font-bold tracking-tight text-[#0F172A]">
+                            {product.title}
+                        </h1>
+                        <span className="text-2xl font-black text-violet-600 bg-violet-50 px-4 py-1.5 rounded-2xl border border-violet-100 shadow-xs">
+                            ${product.price ? product.price.toLocaleString() : "0"}
+                        </span>
+                    </div>
 
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-white shadow-sm">
@@ -129,7 +134,7 @@ export default function ProductDetailContent({ product, servicePackages }: Props
                             thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                             modules={[FreeMode, Navigation, Thumbs, Pagination]}
                             pagination={{ clickable: true, dynamicBullets: true }}
-                            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                            onSlideChange={(swiper: any) => setActiveIndex(swiper.activeIndex)}
                             className="w-full h-full"
                         >
                             {displayImages.map((imgUrl, index) => (
