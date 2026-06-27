@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import ProductGrid from "@/components/products/DesignerProducts";
-import {Layers, LayoutGrid, ShoppingBag} from 'lucide-react';
+import {Layers, LayoutGrid, ShoppingBag, Sparkles} from 'lucide-react';
 import DesignerOverview from "@/components/designer/Overview";
+import ServicesManagement from "@/components/designer/ServicesManagement";
 
-type TabType = 'Overview' | 'Orders' | 'Products';
+type TabType = 'Overview' | 'Orders' | 'Products' | 'Services';
 
 export default function DesignerPage() {
     const [activeTab, setActiveTab] = useState<TabType>('Overview');
@@ -14,6 +15,7 @@ export default function DesignerPage() {
         { id: 'Overview', label: 'Overview', icon: <Layers size={16} /> },
         { id: 'Orders', label: 'Orders', icon: <ShoppingBag size={16} /> },
         { id: 'Products', label: 'Products', icon: <LayoutGrid size={16} /> },
+        { id: 'Services', label: 'Services', icon: <Sparkles size={16} /> },
     ];
 
     return (
@@ -46,7 +48,11 @@ export default function DesignerPage() {
                 <div className="w-full transition-all duration-300">
                     {activeTab === 'Products' ? (
                         <ProductGrid />
-                    ) : activeTab === 'Overview' ? <DesignerOverview /> : (
+                    ) : activeTab === 'Overview' ? (
+                        <DesignerOverview />
+                    ) : activeTab === 'Services' ? (
+                        <ServicesManagement />
+                    ) : (
                         /* Placeholder style for upcoming tabs */
                         <div className="w-full min-h-[400px] bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center p-8">
                             <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mb-4">

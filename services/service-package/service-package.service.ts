@@ -2,6 +2,11 @@ import {CreateServicePackageRequest, ServicePackageResponse, UpdateServicePackag
 import api from "@/lib/api";
 
 export const servicePackageService = {
+    getAllActivePackages: async (): Promise<ServicePackageResponse[]> => {
+        const res = await api.get("/services")
+        return res.data
+    },
+
     getAllServicePackagesByProductId: async (productId: string): Promise<ServicePackageResponse[]> => {
         const res = await api.get("/services/get", {
             params: {
@@ -13,6 +18,11 @@ export const servicePackageService = {
 
     getMyPackages: async (productId: string): Promise<ServicePackageResponse[]> => {
         const res = await api.get(`/services/my-packages/${productId}`)
+        return res.data
+    },
+
+    getMyAllPackages: async (): Promise<ServicePackageResponse[]> => {
+        const res = await api.get(`/services/my-packages`)
         return res.data
     },
 

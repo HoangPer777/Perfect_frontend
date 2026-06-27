@@ -4,7 +4,7 @@ import { CreateServicePackageRequest } from "@/types/service";
 interface ServiceFormState {
     title: string;
     description: string;
-    packageType: 'BASIC' | 'PRO' | 'VIP' | 'CUSTOM';
+    packageType: 'BASIC' | 'MEDIUM' | 'PREMIUM' | 'PRO_MAX' | 'CUSTOM';
     price: number;
     deliveryDays: number;
     revisionsLimit: number;

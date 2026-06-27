@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import ListProduct from "@/components/products/ListProduct";
 import CategoryRow from "@/components/search/CategoryRow";
@@ -24,8 +25,10 @@ export default function Home() {
           View Top Designers <span aria-hidden="true">→</span>
         </Link>
       </div>
+      <Suspense fallback={<div className="w-full max-w-4xl mx-auto mt-14 mb-10 h-10 animate-pulse bg-slate-100 rounded-full" />}>
         <CategoryRow />
-        <ListProduct />
+      </Suspense>
+      <ListProduct />
     </div>
   );
 }

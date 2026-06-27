@@ -6,6 +6,7 @@ import {Category} from "@/types/category";
 interface ProductState {
     title: string;
     description: string;
+    price: string | number;
     images: string[];
     thumbnailId: string | null;
     previews: FilePreview[];
@@ -22,6 +23,7 @@ export const useProductStore = create<ProductState>()(
         (set) => ({
             title: "",
             description: "",
+            price: "",
             images: [],
             thumbnailId: null,
             previews: [],
@@ -43,6 +45,7 @@ export const useProductStore = create<ProductState>()(
             resetForm: () => set({
                 title: "",
                 description: "",
+                price: "",
                 images: [],
                 thumbnailId: null,
                 previews: [],

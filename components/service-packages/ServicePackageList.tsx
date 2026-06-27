@@ -17,10 +17,16 @@ export default function ServicePackageList({ services, onAddToCart, onOrderNow }
         switch (type?.toUpperCase()) {
             case 'BASIC':
                 return 'bg-slate-50 text-slate-600 border-slate-200';
+            case 'MEDIUM':
+                return 'bg-sky-50 text-sky-600 border-sky-200';
+            case 'PREMIUM':
             case 'PRO':
                 return 'bg-purple-50 text-purple-600 border-purple-100';
+            case 'PRO_MAX':
             case 'VIP':
                 return 'bg-amber-50 text-amber-700 border-amber-200';
+            case 'CUSTOM':
+                return 'bg-pink-50 text-pink-600 border-pink-100';
             default:
                 return 'bg-purple-50 text-purple-600 border-purple-100';
         }
@@ -29,7 +35,7 @@ export default function ServicePackageList({ services, onAddToCart, onOrderNow }
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto p-4">
             {services.map((pkg) => {
-                const isRecommended = pkg.packageType?.toUpperCase() === "PRO";
+                const isRecommended = pkg.packageType?.toUpperCase() === "PREMIUM" || pkg.packageType?.toUpperCase() === "PRO";
 
                 return (
                     <div
