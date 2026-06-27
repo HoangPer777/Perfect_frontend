@@ -3,6 +3,7 @@ import {CardProductResponse} from "@/types/product";
 import {PageResponse} from "@/types/common/page";
 
 interface ProductFilterParams {
+    keyword?: string;
     categoryIdStr?: string;
     minPrice?: number;
     maxPrice?: number;
@@ -11,14 +12,15 @@ interface ProductFilterParams {
     size?: number;
 }
 
-export const categoryService = {
+export const searchService = {
     getAllRootCategories: async () => {
         const res = await api.get(`/products/root-categories`);
         return res.data;
     },
     getFilteredProducts: async (filterParams: ProductFilterParams): Promise<PageResponse<CardProductResponse>> => {
-        const res = await api.get(`/products/category-filtered`, {
+        const res = await api.get(`/products/search-filtered`, {
             params: {
+                keyword: filterParams.keyword,
                 categoryIdStr: filterParams.categoryIdStr,
                 minPrice: filterParams.minPrice,
                 maxPrice: filterParams.maxPrice,
