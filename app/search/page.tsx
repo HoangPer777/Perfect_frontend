@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import CardProduct from "@/components/products/CardProduct";
 import { searchService } from "@/services/products/search.service";
 import FilterSidebar from "@/components/search/FilterSidebar";
@@ -63,17 +63,21 @@ export default async function CategoryPage({ searchParams }: PageProps) {
                     </div>
 
                     {/* Sorting Dropdown (Small Client Component) */}
-                    <SortSelect currentSortBy={currentSortBy} />
+                    <Suspense fallback={<div className="h-10 w-32 bg-slate-100 animate-pulse rounded-xl" />}>
+                        <SortSelect currentSortBy={currentSortBy} />
+                    </Suspense>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
                     {/* FILTER SIDEBAR (Small Client Component for fast URL routing) */}
-                    <FilterSidebar
-                        categories={categories}
-                        currentCategory={currentCategory}
-                        currentPriceTier={currentPriceTier}
-                    />
+                    <Suspense fallback={<div className="h-96 w-full bg-slate-100 animate-pulse rounded-2xl" />}>
+                        <FilterSidebar
+                            categories={categories}
+                            currentCategory={currentCategory}
+                            currentPriceTier={currentPriceTier}
+                        />
+                    </Suspense>
 
                     {/* PRODUCT GRID WITH PAGINATION */}
                     <div className="lg:col-span-3">
@@ -89,10 +93,12 @@ export default async function CategoryPage({ searchParams }: PageProps) {
                                 </div>
 
                                 {/* THANH PHÂN TRANG HIỂN THỊ TẠI ĐÂY */}
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                />
+                                <Suspense fallback={<div className="h-10 w-48 bg-slate-100 animate-pulse rounded-xl mt-12" />}>
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                    />
+                                </Suspense>
                             </div>
                         ) : (
                             <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm">

@@ -77,6 +77,7 @@ export default function EditProductPage() {
                             id:  product.id,
                             title: product.title || "",
                             description: product.description || "",
+                            price: product.price || 0,
                             categories: (product.categories || []).map((cat: any) => ({
                                 id: cat.id,
                                 name: cat.name

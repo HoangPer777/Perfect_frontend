@@ -14,11 +14,11 @@ export default function CardProduct(product: CardProductResponse) {
                     alt={product.title}
                 />
                 {/* Giá tiền nổi bật trên ảnh */}
-                {/*<div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm">*/}
-                {/*    <span className="text-sm font-bold text-slate-900">*/}
-                {/*        ${product.price.toLocaleString()}*/}
-                {/*    </span>*/}
-                {/*</div>*/}
+                <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg shadow-sm">
+                    <span className="text-sm font-bold text-slate-900">
+                        ${product.price ? product.price.toLocaleString() : "0"}
+                    </span>
+                </div>
             </div>
 
             {/* Nội dung Card */}
