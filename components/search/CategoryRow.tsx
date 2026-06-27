@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { categoryService } from "@/services/products/category.service";
+import { searchService } from "@/services/products/search.service";
 import { Category } from "@/types/category";
 
 export default function CategoryRow() {
@@ -14,7 +14,7 @@ export default function CategoryRow() {
     const currentCategoryId = searchParams.get('categoryId') || "For You";
 
     useEffect(() => {
-        categoryService.getAllRootCategories()
+        searchService.getAllRootCategories()
             .then(data => setCategories(data || []))
             .catch(err => console.error("Failed to load categories:", err));
     }, []);
@@ -44,7 +44,7 @@ export default function CategoryRow() {
                     return (
                         <button
                             key={cat.id}
-                            onClick={() => router.push(`/category?categoryId=${cat.id}`)}
+                            onClick={() => router.push(`/search?categoryId=${cat.id}`)}
                             className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 border ${
                                 isActive
                                     ? 'bg-[#0f172a] text-white border-[#0f172a] shadow-sm'

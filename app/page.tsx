@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ListProduct from "@/components/products/ListProduct";
-import CategoryRow from "@/components/category/CategoryRow";
+import CategoryRow from "@/components/search/CategoryRow";
 
 export default function Home() {
   return (

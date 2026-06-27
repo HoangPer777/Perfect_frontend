@@ -1,13 +1,14 @@
 import React from 'react';
 import CardProduct from "@/components/products/CardProduct";
-import { categoryService } from "@/services/products/category.service";
-import FilterSidebar from "@/components/category/FilterSidebar";
-import SortSelect from "@/components/category/SortSelect";
-import Pagination from "@/components/category/Pagination"; 
+import { searchService } from "@/services/products/search.service";
+import FilterSidebar from "@/components/search/FilterSidebar";
+import SortSelect from "@/components/search/SortSelect";
+import Pagination from "@/components/search/Pagination"; 
 import { PRICE_TIERS } from "@/types/category";
 
 interface PageProps {
     searchParams: Promise<{
+        keyword?: string;
         categoryId?: string;
         priceTier?: string;
         sortBy?: string;
@@ -19,6 +20,7 @@ export default async function CategoryPage({ searchParams }: PageProps) {
     const params = await searchParams;
 
     // Fallback default values for synchronization between Client Components and Back-end API
+    const currentKeyword = params.keyword || "";
     const currentCategory = params.categoryId || "All";
     const currentPriceTier = params.priceTier || "all";
     const currentSortBy = params.sortBy || "recommended";
@@ -29,8 +31,9 @@ export default async function CategoryPage({ searchParams }: PageProps) {
 
     // 2. Fetch data in parallel directly from Server to Back-end API
     const [categories, productPage] = await Promise.all([
-        categoryService.getAllRootCategories(),
-        categoryService.getFilteredProducts({
+        searchService.getAllRootCategories(),
+        searchService.getFilteredProducts({
+            keyword: currentKeyword,
             categoryIdStr: currentCategory,
             sortBy: currentSortBy,
             minPrice: selectedTier.minPrice,
