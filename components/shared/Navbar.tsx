@@ -119,7 +119,14 @@ export default function Navbar() {
                     </div>
 
                     <Link 
-                      href={user.role === "ROLE_DESIGNER" ? "/designer" : "/customer"} 
+                     // href={user.role === "ROLE_DESIGNER" ? "/designer" : "/customer"}
+                        href={
+                          user.role === "ROLE_ADMIN"
+                              ? "/admin/dashboard"
+                              : user.role === "ROLE_DESIGNER"
+                                  ? "/designer"
+                                  : "/customer"
+                        }
                       onClick={() => setDropdownOpen(false)}
                       className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-muted transition-colors w-full text-left"
                     >
