@@ -1,10 +1,12 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import ListProduct from "@/components/products/ListProduct";
+import CategoryRow from "@/components/search/CategoryRow";
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 text-center">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-primary">
+      <h1 className="text-4xl mt-12 font-bold tracking-tight sm:text-6xl text-primary">
         Welcome to Perfect Market
       </h1>
       <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl">
@@ -23,25 +25,10 @@ export default function Home() {
           View Top Designers <span aria-hidden="true">→</span>
         </Link>
       </div>
-
-      {/*<section className="mt-20 w-full max-w-6xl">*/}
-      {/*  <h2 className="text-2xl font-bold mb-8">Featured Sections TODOs:</h2>*/}
-      {/*  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">*/}
-      {/*    <div className="p-6 border rounded-lg">*/}
-      {/*      <h3 className="font-bold">Most Viewed</h3>*/}
-      {/*      /!* TODO: Display top viewed products *!/*/}
-      {/*    </div>*/}
-      {/*    <div className="p-6 border rounded-lg">*/}
-      {/*      <h3 className="font-bold">Latest Products</h3>*/}
-      {/*      /!* TODO: Display newest products *!/*/}
-      {/*    </div>*/}
-      {/*    <div className="p-6 border rounded-lg">*/}
-      {/*      <h3 className="font-bold">Hot Designers</h3>*/}
-      {/*      /!* TODO: Display trending designers *!/*/}
-      {/*    </div>*/}
-      {/*  </div>*/}
-      {/*</section>*/}
-        <ListProduct />
+      <Suspense fallback={<div className="w-full max-w-4xl mx-auto mt-14 mb-10 h-10 animate-pulse bg-slate-100 rounded-full" />}>
+        <CategoryRow />
+      </Suspense>
+      <ListProduct />
     </div>
   );
 }

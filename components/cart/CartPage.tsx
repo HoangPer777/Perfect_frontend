@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { CartItemResponse } from '@/types/cart';
 import { PageResponse } from "@/types/common/page";
 import { ChevronRight, Trash2, Clock, RefreshCw, ShoppingCart, Loader2 } from 'lucide-react';

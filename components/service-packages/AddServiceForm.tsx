@@ -1,18 +1,20 @@
 "use client";
-
+ 
 import React, { useEffect, useState } from "react";
 import { useServiceFormStore } from "@/store/addServiceStore";
 import { servicePackageService } from "@/services/service-package/service-package.service";
+import { productService } from "@/services/products/product.service";
+import { SnapshotProductResponse } from "@/types/product";
 import { X, Loader2, Sparkles, DollarSign, Calendar, RefreshCcw } from "lucide-react";
 import { ServicePackageResponse } from "@/types/service";
-
+ 
 interface AddServiceFormProps {
-    productId: string;
+    productId?: string;
     initialData?: ServicePackageResponse | null; 
     onClose: () => void;
     onSuccess: () => void;
 }
-
+ 
 export default function AddServiceForm({ productId, initialData, onClose, onSuccess }: AddServiceFormProps) {
     const {
         title,
@@ -24,12 +26,16 @@ export default function AddServiceForm({ productId, initialData, onClose, onSucc
         setField,
         resetForm,
     } = useServiceFormStore();
-
+ 
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
     const isEditMode = !!initialData;
 
+    const [products, setProducts] = useState<SnapshotProductResponse[]>([]);
+    const [selectedProductId, setSelectedProductId] = useState<string>("");
+    const [loadingProducts, setLoadingProducts] = useState(false);
+ 
     useEffect(() => {
         setMounted(true);
         if (initialData) {
@@ -39,33 +45,53 @@ export default function AddServiceForm({ productId, initialData, onClose, onSucc
             setField("price", initialData.price);
             setField("deliveryDays", initialData.deliveryDays);
             setField("revisionsLimit", initialData.revisionsLimit);
+            setSelectedProductId(initialData.productId || "");
         } else {
             resetForm();
+            setSelectedProductId(productId || "");
         }
-    }, [initialData]);
 
+        if (!productId) {
+            const fetchProducts = async () => {
+                try {
+                    setLoadingProducts(true);
+                    const list = await productService.getMyProducts();
+                    setProducts(list);
+                    if (list.length > 0 && !initialData) {
+                        setSelectedProductId("");
+                    }
+                } catch (err) {
+                    console.error("Failed to load designer products", err);
+                } finally {
+                    setLoadingProducts(false);
+                }
+            };
+            fetchProducts();
+        }
+    }, [initialData, productId]);
+ 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
+ 
         if (!title.trim() || !description.trim()) {
             setError("Please fill in all required fields.");
             return;
         }
-
+ 
         try {
             setSubmitting(true);
             setError(null);
-
+ 
             const payload = {
-                productId,
+                productId: selectedProductId || null,
                 title,
                 description,
-                packageType: packageType as 'BASIC' | 'PRO' | 'VIP' | 'CUSTOM',
+                packageType: packageType as 'BASIC' | 'MEDIUM' | 'PREMIUM' | 'PRO_MAX' | 'CUSTOM',
                 price: Number(price),
                 deliveryDays: Number(deliveryDays),
                 revisionsLimit: Number(revisionsLimit),
             };
-
+ 
             if (isEditMode && initialData) {
                 // Gọi API cập nhật
                 await servicePackageService.updateServicePackage(initialData.id, payload);
@@ -73,7 +99,7 @@ export default function AddServiceForm({ productId, initialData, onClose, onSucc
                 // Gọi API tạo mới
                 await servicePackageService.createServicePackage(payload);
             }
-
+ 
             resetForm();
             onSuccess();
             onClose();
@@ -121,6 +147,37 @@ export default function AddServiceForm({ productId, initialData, onClose, onSucc
                     </div>
                 )}
 
+                {/* Product Association (Only when productId prop is not provided) */}
+                {!productId && (
+                    <div className="space-y-2">
+                        <label className="block font-semibold text-gray-800">
+                            Associate Product / Portfolio Item <span className="text-gray-400 font-normal">(Optional)</span>
+                        </label>
+                        {loadingProducts ? (
+                            <div className="flex items-center gap-2 text-xs text-gray-400 py-2">
+                                <Loader2 size={14} className="animate-spin text-purple-600" />
+                                Loading products list...
+                            </div>
+                        ) : (
+                            <select
+                                value={selectedProductId}
+                                onChange={(e) => setSelectedProductId(e.target.value)}
+                                className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 outline-none transition bg-white font-medium"
+                            >
+                                <option value="">-- None (No Associated Product) --</option>
+                                {products.map((prod) => (
+                                    <option key={prod.id} value={prod.id}>
+                                        {prod.title}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
+                        <p className="text-[11px] text-gray-400">
+                            This service package can be bound to this specific design and visible to customers on its detail page.
+                        </p>
+                    </div>
+                )}
+
                 {/* Package Title */}
                 <div className="space-y-2">
                     <label className="block font-semibold text-gray-800">
@@ -157,12 +214,13 @@ export default function AddServiceForm({ productId, initialData, onClose, onSucc
                         <label className="block font-semibold text-gray-800">Tier Type</label>
                         <select
                             value={packageType}
-                            onChange={(e) => setField("packageType", e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 outline-none transition bg-white"
+                            onChange={(e) => setField("packageType", e.target.value as any)}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-600/20 focus:border-purple-600 outline-none transition bg-white font-medium"
                         >
-                            <option value="BASIC">Basic</option>
-                            <option value="PRO">Pro</option>
-                            <option value="VIP">VIP</option>
+                            <option value="BASIC">Basic ($10 - $30)</option>
+                            <option value="MEDIUM">Medium ($40 - $80)</option>
+                            <option value="PREMIUM">Premium ($90 - $200)</option>
+                            <option value="PRO_MAX">Pro Max ($250 - $500+)</option>
                             <option value="CUSTOM">Custom</option>
                         </select>
                     </div>

@@ -17,7 +17,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ isEditMode = false, initialData, onDeleteSuccess, onSaveSuccess }: ProductFormProps) {
     const router = useRouter();
-    const { title, description, previews, thumbnailId, categories, status, toggleCategory, setField, resetForm } = useProductStore();
+    const { title, description, price, previews, thumbnailId, categories, status, toggleCategory, setField, resetForm } = useProductStore();
     const [loading, setLoading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +30,7 @@ export default function ProductForm({ isEditMode = false, initialData, onDeleteS
         if (isEditMode && initialData) {
             setField("title", initialData.title);
             setField("description", initialData.description);
+            setField("price", initialData.price ?? "");
             setField("categories", initialData.categories);
             setField("status", initialData.status); 
 
@@ -132,6 +133,7 @@ export default function ProductForm({ isEditMode = false, initialData, onDeleteS
             const finalData: AddProductRequest = {
                 title: title,
                 description: description,
+                price: typeof price === "string" ? parseFloat(price) || 0 : price,
                 thumbnailUrl: finalThumbnailUrl,
                 status: status, // Lấy trực tiếp trạng thái được chọn từ ô select của Store
                 images: allImageUrls,
@@ -207,6 +209,22 @@ export default function ProductForm({ isEditMode = false, initialData, onDeleteS
                     placeholder="e.g. Dreamscape Brand Identity"
                     className="w-full bg-gray-100 border-none rounded-xl p-4 text-gray-700 focus:ring-2 focus:ring-violet-200 outline-none"
                 />
+            </section>
+
+            <section>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Base Price ($)</label>
+                <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                    <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={price}
+                        onChange={(e) => setField("price", e.target.value)}
+                        placeholder="e.g. 49.99"
+                        className="w-full bg-gray-100 border-none rounded-xl p-4 pl-8 text-gray-700 focus:ring-2 focus:ring-violet-200 outline-none"
+                    />
+                </div>
             </section>
 
             <section>

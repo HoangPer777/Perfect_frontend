@@ -14,7 +14,7 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { cartCount, resetCount } = useCartStore()
-      
+  const [keyword, setKeyword] = useState<string>("");    
   useEffect(() => {
     setMounted(true);
     
@@ -56,6 +56,13 @@ export default function Navbar() {
                 <Search size={18} />
               </span>
               <input
+                  value={keyword}
+                  onChange={(e) => {setKeyword(e.target.value)}}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      router.push(`/search?keyword=${keyword}`);
+                    }
+                  }}
                 type="text"
                 className="block w-full pl-10 pr-3 py-2 border border-input rounded-full bg-muted/50 focus:bg-white transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="Search for designs, services..."
