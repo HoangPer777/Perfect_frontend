@@ -1,4 +1,6 @@
 import api from "@/lib/api";
+import {PageResponse} from "@/types/common/page";
+import {Role, SnapshotUserResponse, UserInfoResponse} from "@/types/admin";
 
 export interface LoginRequest {
   email: string;
@@ -104,4 +106,38 @@ export const authService = {
     const response = await api.get("/tasks/customer");
     return response.data;
   },
+  getAdminUsers: async (params: { role?: string; username?: string; page: number; size: number }) => {
+    const response = await api.get<PageResponse<SnapshotUserResponse>>(
+        "/admin/users/get-user-list",
+        {
+          params: {
+            role: params.role === "ALL" ? undefined : params.role,
+            username: params.username || undefined,
+            page: params.page - 1,
+            size: params.size,
+          },
+        }
+    );
+    return response.data;
+  },
+  getAdminUserInfo: async (id: string): Promise<UserInfoResponse> => {
+    const response = await api.get("/admin/users/user-info", {
+      params: {
+        id: id,
+      }
+    })
+    return response.data
+  },
+  getAllRoles: async (): Promise<Role[]> => {
+    const response = await api.get("/admin/users/get-roles")
+    return response.data;
+  },
+  updateUserRole: async (request: {userId: string, roleId: number}): Promise<boolean> => {
+    const res = await api.put(`/admin/users/update-role`, request);
+    return res.data
+  },
+  updateUserStatus: async (request: {userId: string, status: string}): Promise<boolean> => {
+    const res = await api.put(`/admin/users/update-status`, request);
+    return res.data
+  }
 };
