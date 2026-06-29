@@ -10,8 +10,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/pagination';
 import { ProductResponse } from "@/types/product";
-import {useRouter} from "next/navigation";
-import {cartService} from "@/services/cart/cart.service";
+import { useRouter } from "next/navigation";
+import { cartService } from "@/services/cart/cart.service";
 
 interface Props {
     product: ProductResponse;
@@ -22,14 +22,13 @@ export default function ProductDetailContent({ product }: Props) {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const router = useRouter();
+
     const handleOrderNow = async () => {
         try {
             await cartService.addToCart({
                 productId: product.id,
                 quantity: 1
             });
-
-            // Điều hướng sang trang giỏ hàng
             router.push("/cart");
         } catch (error) {
             console.error("Lỗi thêm vào giỏ:", error);
@@ -94,7 +93,7 @@ export default function ProductDetailContent({ product }: Props) {
                         Contact Designer
                     </button>
                     <button
-                        onClick={handleOrderNow} // Gọi hàm xử lý giỏ hàng
+                        onClick={handleOrderNow}
                         className="bg-gradient-to-r from-[#7C3AED] to-[#A855F7] hover:from-[#6D28D9] hover:to-[#9333EA] text-white px-6 py-3 rounded-full text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
                     >
                         Order now
@@ -115,13 +114,19 @@ export default function ProductDetailContent({ product }: Props) {
                 {/* IMAGE SLIDER SECTION */}
                 <div className="space-y-4 relative group">
                     <div className="rounded-[32px] overflow-hidden bg-[#0B0F19] aspect-[16/10] relative shadow-xs">
+
+                        {/* TAG GIÁ TIỀN HIỂN THỊ TRÊN ẢNH */}
+                        <div className="absolute top-5 left-5 z-20 bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-extrabold tracking-wide border border-white/10 shadow-lg select-none">
+                            {product.price}$
+                        </div>
+
                         <Swiper
                             spaceBetween={10}
                             navigation={{ nextEl: '.custom-next', prevEl: '.custom-prev' }}
                             thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                             modules={[FreeMode, Navigation, Thumbs, Pagination]}
                             pagination={{ clickable: true, dynamicBullets: true }}
-                            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Cập nhật vị trí khi vuốt ảnh lớn
+                            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
                             className="w-full h-full"
                         >
                             {displayImages.map((imgUrl, index) => (
@@ -134,7 +139,7 @@ export default function ProductDetailContent({ product }: Props) {
                         <button className="custom-next absolute right-5 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md p-2.5 rounded-full shadow-md text-gray-700 hover:bg-white transition opacity-0 group-hover:opacity-100"><ChevronRight size={16} /></button>
                     </div>
 
-                    {/* Thumbnails Swiper (Chỉ hiện khi có nhiều hơn 1 ảnh) */}
+                    {/* Thumbnails Swiper */}
                     {displayImages.length > 1 && (
                         <div className="w-full overflow-hidden">
                             <Swiper
@@ -193,8 +198,8 @@ export default function ProductDetailContent({ product }: Props) {
                     <div className="flex flex-wrap gap-2 order-1 md:order-2 md:justify-end">
                         {(product.categories || []).map((tag) => (
                             <span key={tag.id} className="px-4 py-2 bg-[#F1F3F6] text-gray-600 rounded-full text-xs font-semibold">
-        {tag.name}
-    </span>
+                                {tag.name}
+                            </span>
                         ))}
                     </div>
                 </div>

@@ -51,7 +51,7 @@ export default function CardProduct(props: any) {
                 </div>
 
                 {/* Thông tin Designer */}
-                <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                <Link href={`/designers/${product.designerId}`} className="mt-auto pt-4 hover:underline border-t border-gray-50 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         {product.avatarUrlDesigner ? (
                             <img
@@ -71,7 +71,7 @@ export default function CardProduct(props: any) {
                     <button className="text-[10px] font-bold uppercase tracking-wider text-primary hover:text-slate-900 transition-colors">
                         Details
                     </button>
-                </div>
+                </Link>
             </div>
         </Link>
     );

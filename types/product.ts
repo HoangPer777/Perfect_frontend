@@ -17,6 +17,7 @@ export interface CardProductResponse {
     ratingAvg: number;
     soldCount: number;
     avatarUrlDesigner: string;
+    designerId: string
     usernameDesigner: string;
 }
 

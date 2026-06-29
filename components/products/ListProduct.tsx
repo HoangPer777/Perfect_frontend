@@ -9,6 +9,7 @@ import {useEffect, useState} from "react";
 import {productService} from "@/services/products/product.service";
 import {CardProductResponse} from "@/types/product";
 import {CardDesignerResponse} from "@/types/designer";
+import Link from "next/link";
 
 const SwiperContainer = Swiper as any;
 const SwiperItem = SwiperSlide as any;
@@ -110,7 +111,7 @@ export default function ListProduct() {
                 >
                     {hottestDesigner.map((designer) => (
                         <SwiperItem key={designer.id}>
-                            <div className="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-[2rem] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
+                            <Link href={`/designers/${designer.id}`} className="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-[2rem] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
                                 <div className="relative mb-4">
                                     <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg scale-0 group-hover:scale-110 transition-transform duration-500"></div>
                                     {designer.avatarUrl ? (
@@ -130,7 +131,7 @@ export default function ListProduct() {
                                 <button className="mt-4 px-6 py-2 rounded-full bg-slate-900 text-white text-[11px] font-bold hover:bg-primary transition-colors w-full">
                                     View Profile
                                 </button>
-                            </div>
+                            </Link>
                         </SwiperItem>
                     ))}
                 </SwiperContainer>

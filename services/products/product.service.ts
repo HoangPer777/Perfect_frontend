@@ -232,4 +232,12 @@ export const productService = {
             return [];
         }
     },
+    getProductsDesigner: async (id: string): Promise<SnapshotProductResponse[]> => {
+        const res = await api.get(`/products/designer`, {
+            params: {
+                designerId: id
+            }
+        });
+        return res.data
+    }
 };
