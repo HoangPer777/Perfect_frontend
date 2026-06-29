@@ -13,7 +13,7 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { cartCount, resetCount } = useCartStore()
+  //const { cartCount, resetCount } = useCartStore()
   const [keyword, setKeyword] = useState<string>("");    
   useEffect(() => {
     setMounted(true);
@@ -29,7 +29,7 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    resetCount();
+    //resetCount();
     logout();
     setDropdownOpen(false);
     router.push("/login");
@@ -76,11 +76,11 @@ export default function Navbar() {
                 className="p-2 hover:bg-muted rounded-full relative text-gray-600 hover:text-primary transition-colors flex items-center justify-center"
             >
               <ShoppingCart size={20} />
-              {cartCount !== null && cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-scaleUp">
-                        {cartCount > 99 ? "99+" : cartCount}
-                    </span>
-              )}
+              {/*{cartCount !== null && cartCount > 0 && (*/}
+              {/*    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-scaleUp">*/}
+              {/*          {cartCount > 99 ? "99+" : cartCount}*/}
+              {/*      </span>*/}
+              {/*)}*/}
             </Link>
             <Link href="/notifications" className="p-2 hover:bg-muted rounded-full relative text-gray-600 hover:text-primary transition-colors">
               <Bell size={20} />
