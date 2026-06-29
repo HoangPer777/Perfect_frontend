@@ -4,7 +4,11 @@ import {
     AddProductResponse,
     CardProductResponse,
     ProductResponse,
-    SnapshotProductResponse
+    SnapshotProductResponse,
+    DesignerServiceGroupResponse,
+    ServicePackageResponse,
+    AdminProductListResponse
+
 } from "@/types/product";
 import {Category} from "@/types/category";
 import {CardDesignerResponse} from "@/types/designer";
@@ -61,5 +65,19 @@ export const productService = {
     getMyProducts: async (): Promise<SnapshotProductResponse[]> => {
         const res = await api.get("/products/my-products");
         return res.data
-    }
+    },
+    getDesignerServiceGroups: async (): Promise<DesignerServiceGroupResponse[]> => {
+        const res = await api.get("/services/designers");
+        return res.data;
+    },
+
+    getDesignerPackages: async (designerId: string): Promise<ServicePackageResponse[]> => {
+        const res = await api.get(`/services/designers/${designerId}`);
+        return res.data;
+    },
+
+    getAdminProducts: async (): Promise<AdminProductListResponse[]> => {
+        const res = await api.get("/products/admin");
+        return res.data;
+    },
 };
