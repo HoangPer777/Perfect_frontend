@@ -46,6 +46,23 @@ export default function ServicesListingPage() {
       setLoading(false);
     }
   };
+    // const handleOrderNow = async (pkg: ServicePackageResponse) => {
+    //     if (!user) {
+    //         alert("Vui lòng đăng nhập!");
+    //         return;
+    //     }
+    //
+    //     try {
+    //         const initRes = await paymentService.initPayment({
+    //             orderId: pkg.id, // ID của gói dịch vụ
+    //             amount: pkg.price,
+    //             provider: 'VNPAY' // Hoặc chọn provider
+    //         });
+    //         window.location.href = initRes.paymentUrl; // Chuyển hướng sang cổng thanh toán
+    //     } catch (err) {
+    //         alert("Có lỗi khi tạo yêu cầu thanh toán.");
+    //     }
+    // };
  
   const handleAddToCart = async (pkg: ServicePackageResponse) => {
     if (!user) {

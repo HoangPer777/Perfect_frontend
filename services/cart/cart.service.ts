@@ -1,27 +1,65 @@
-import {PageResponse} from "@/types/common/page";
-import {AddCartItemResponse, CartItemResponse} from "@/types/cart";
+// src/services/cart/cart.service.ts
+import axios from "axios";
+import { CartResponse } from "@/types/cart";
+import { AddToCartRequest } from "@/types/cart";
 import api from "@/lib/api";
 
-export const cartService = {
-    getCarts: async (page: number, size: number): Promise<PageResponse<CartItemResponse>> => {
-        const res = await api.get("/carts/get", {
-            params: {
-                page: page - 1,
-                size: size
-            }
-        });
-        return res.data;
-    },
-    addCartItem: async (serviceId: string): Promise<AddCartItemResponse> => {
-        const res = await api.post(`/carts/add`, serviceId);
-        return res.data
-    },
-    countCartItems: async (): Promise<number> => {
-        const res = await api.get(`/carts/count`);
-        return res.data
-    },
-    deleteCartItem: async (serviceId: string): Promise<Boolean> => {
-        const res = await api.delete(`/carts/delete/${serviceId}`);
-        return res.data
+const API_URL = "http://localhost:8080/api/v1/cart";
+
+
+const getAuthHeader = () => {
+    const authData = localStorage.getItem("auth-storage");
+    if (!authData) return {};
+
+    try {
+        const parsedData = JSON.parse(authData);
+        // Kiểm tra xem token có phải là null/undefined không
+        const token = parsedData.state?.token;
+
+        if (!token) {
+            console.error("Token bị rỗng trong localStorage!");
+            return {};
+        }
+
+        return { headers: { Authorization: `Bearer ${token}` } };
+    } catch (e) {
+        return {};
     }
-}
+};
+
+export const cartService = {
+    getCart: async (): Promise<CartResponse> => {
+        const response = await axios.get(API_URL, getAuthHeader());
+        return response.data;
+    },
+
+    addToCart: async (data: { productId: string; quantity: number }) => {
+        const config = getAuthHeader();
+        console.log("Config headers gửi đi:", config);
+
+        return await axios.post(`${API_URL}/add`, data, config);
+    },
+
+    removeItem: async (productId: string) => {
+        return await axios.delete(`${API_URL}/remove/${productId}`, getAuthHeader());
+    },
+
+    updateItemQuantity: async (productId: string, quantity: number) => {
+        return await axios.patch(`${API_URL}/update`, { productId, quantity }, getAuthHeader());
+    },
+
+    clearCart: async () => {
+        return await axios.delete(`${API_URL}/clear`, getAuthHeader());
+    },
+    addCartItem: async (productId: string, quantity?: number) => {
+        try {
+            const res = await api.post("/cart/add", {
+                productId: productId,
+                quantity: quantity || 1
+            });
+            return res.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+};

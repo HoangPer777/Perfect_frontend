@@ -1,22 +1,21 @@
+// src/types/cart.ts
+
+export interface AddToCartRequest {
+    productId: string;
+    quantity: number;
+}
+
 export interface CartItemResponse {
-    id: string;
-    product: {
-        id: string;
-        designerId: string;
-        designerUsername: string;
-        title: string;
-        thumbnailUrl: string;
-    };
-    serviceId: string;
-    title: string;
-    packageType: 'BASIC' | 'PRO' | 'VIP' | 'CUSTOM';
+    cartItemId: string;
+    productId: string;
+    productTitle: string;
+    thumbnailUrl: string;
     price: number;
-    deliveryDays: number;
-    revisionsLimit: number;
+    quantity: number;
 }
 
-export interface AddCartItemResponse {
-    success: boolean;
-    exists: boolean;
+export interface CartResponse {
+    cartId: string;
+    items: CartItemResponse[];
+    totalPrice: number;
 }
-
