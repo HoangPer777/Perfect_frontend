@@ -52,7 +52,8 @@ export default function LoginContent() {
   };
 
   const handleSocialLogin = (provider: 'google' | 'facebook') => {
-    window.location.href = `/oauth2/authorization/${provider}`;
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || "http://localhost:8080";
+    window.location.href = `${backendUrl}/oauth2/authorization/${provider}`;
   };
 
   return (
