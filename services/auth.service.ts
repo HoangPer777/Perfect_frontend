@@ -139,5 +139,13 @@ export const authService = {
   updateUserStatus: async (request: {userId: string, status: string}): Promise<boolean> => {
     const res = await api.put(`/admin/users/update-status`, request);
     return res.data
+  },
+  getDesignerInfo: async (id: string): Promise<UserInfoResponse> => {
+    const response = await api.get("/auth/profile-designer", {
+      params: {
+        id: id,
+      }
+    })
+    return response.data
   }
 };

@@ -133,6 +133,12 @@ export default function ProductDetailContent({ product }: Props) {
                 {/* IMAGE SLIDER SECTION */}
                 <div className="space-y-4 relative group">
                     <div className="rounded-[32px] overflow-hidden bg-[#0B0F19] aspect-[16/10] relative shadow-xs">
+
+                        {/* TAG GIÁ TIỀN HIỂN THỊ TRÊN ẢNH */}
+                        <div className="absolute top-5 left-5 z-20 bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-extrabold tracking-wide border border-white/10 shadow-lg select-none">
+                            {product.price}$
+                        </div>
+
                         <Swiper
                             spaceBetween={10}
                             navigation={{ nextEl: '.custom-next', prevEl: '.custom-prev' }}
@@ -214,8 +220,8 @@ export default function ProductDetailContent({ product }: Props) {
                     <div className="flex flex-wrap gap-2 order-1 md:order-2 md:justify-end">
                         {(product.categories || []).map((tag) => (
                             <span key={tag.id} className="px-4 py-2 bg-[#F1F3F6] text-gray-600 rounded-full text-xs font-semibold">
-        {tag.name}
-    </span>
+                                {tag.name}
+                            </span>
                         ))}
                     </div>
                 </div>
