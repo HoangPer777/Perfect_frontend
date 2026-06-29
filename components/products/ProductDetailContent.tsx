@@ -10,8 +10,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/pagination';
 import { ProductResponse } from "@/types/product";
-import { useRouter } from "next/navigation";
-import { cartService } from "@/services/cart/cart.service";
+import {useRouter} from "next/navigation";
+import {cartService} from "@/services/cart/cart.service";
+import { useAuthStore } from "@/store/authStore";
 
 interface Props {
     product: ProductResponse;
@@ -22,6 +23,19 @@ export default function ProductDetailContent({ product }: Props) {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const router = useRouter();
+    const { isAuthenticated } = useAuthStore();
+
+    const handleContactDesigner = () => {
+        if (!isAuthenticated) {
+            alert("Vui lòng đăng nhập để thực hiện tính năng này!");
+            router.push(`/login?redirect=/products/${product.id}`);
+            return;
+        }
+        const designerId = product.designer?.id;
+        const name = product.designer?.username || "Designer";
+        const avatar = product.designer?.avatarUrl || "";
+        router.push(`/chat?userId=${designerId}&name=${encodeURIComponent(name)}&avatar=${encodeURIComponent(avatar)}`);
+    };
 
     const handleOrderNow = async () => {
         try {
@@ -29,6 +43,8 @@ export default function ProductDetailContent({ product }: Props) {
                 productId: product.id,
                 quantity: 1
             });
+
+            // Điều hướng sang trang giỏ hàng
             router.push("/cart");
         } catch (error) {
             console.error("Lỗi thêm vào giỏ:", error);
@@ -89,11 +105,14 @@ export default function ProductDetailContent({ product }: Props) {
                     <button className="p-3 bg-white border border-gray-200/60 rounded-full text-gray-500 hover:text-red-500 hover:border-red-200 shadow-sm transition-all">
                         <Heart size={18} />
                     </button>
-                    <button className="px-5 py-3 bg-white border border-gray-200/80 hover:bg-gray-50 text-[#0F172A] rounded-full text-xs font-bold shadow-2xs transition-all active:scale-[0.98]">
+                    <button 
+                        onClick={handleContactDesigner}
+                        className="px-5 py-3 bg-white border border-gray-200/80 hover:bg-gray-50 text-[#0F172A] rounded-full text-xs font-bold shadow-2xs transition-all active:scale-[0.98]"
+                    >
                         Contact Designer
                     </button>
                     <button
-                        onClick={handleOrderNow}
+                        onClick={handleOrderNow} // Gọi hàm xử lý giỏ hàng
                         className="bg-gradient-to-r from-[#7C3AED] to-[#A855F7] hover:from-[#6D28D9] hover:to-[#9333EA] text-white px-6 py-3 rounded-full text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
                     >
                         Order now
@@ -126,7 +145,7 @@ export default function ProductDetailContent({ product }: Props) {
                             thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                             modules={[FreeMode, Navigation, Thumbs, Pagination]}
                             pagination={{ clickable: true, dynamicBullets: true }}
-                            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                            onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Cập nhật vị trí khi vuốt ảnh lớn
                             className="w-full h-full"
                         >
                             {displayImages.map((imgUrl, index) => (
@@ -139,7 +158,7 @@ export default function ProductDetailContent({ product }: Props) {
                         <button className="custom-next absolute right-5 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-md p-2.5 rounded-full shadow-md text-gray-700 hover:bg-white transition opacity-0 group-hover:opacity-100"><ChevronRight size={16} /></button>
                     </div>
 
-                    {/* Thumbnails Swiper */}
+                    {/* Thumbnails Swiper (Chỉ hiện khi có nhiều hơn 1 ảnh) */}
                     {displayImages.length > 1 && (
                         <div className="w-full overflow-hidden">
                             <Swiper
@@ -189,7 +208,10 @@ export default function ProductDetailContent({ product }: Props) {
                         >
                             Order now
                         </button>
-                        <button className="px-5 py-3.5 bg-[#F1F3F6] hover:bg-gray-200/80 text-gray-700 rounded-[20px] text-xs font-bold transition-all flex items-center gap-2">
+                        <button 
+                            onClick={handleContactDesigner}
+                            className="px-5 py-3.5 bg-[#F1F3F6] hover:bg-gray-200/80 text-gray-700 rounded-[20px] text-xs font-bold transition-all flex items-center gap-2"
+                        >
                             <MessageSquare size={14} />
                             Contact Designer
                         </button>
