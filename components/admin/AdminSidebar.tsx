@@ -20,6 +20,13 @@ export default function AdminSidebar() {
 
             <nav className="space-y-2">
                 <Link
+                    href="/admin/dashboard"
+                    className={getLinkClass("/admin/dashboard")}
+                >
+                    Dashboard
+                </Link>
+                
+                <Link
                     href="/admin/orders"
                     className={getLinkClass("/admin/orders")}
                 >
