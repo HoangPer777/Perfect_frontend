@@ -3,7 +3,16 @@ import React from 'react';
 import {CardProductResponse} from "@/types/product";
 import Link from "next/link";
 
-export default function CardProduct(product: CardProductResponse) {
+// Chấp nhận mọi cấu trúc prop: Hoặc nhận trực tiếp, hoặc nhận bọc qua thuộc tính .product
+export default function CardProduct(props: any) {
+    // Tự động đồng bộ: nếu props truyền vào có bọc trường .product thì lấy trường đó, không thì lấy chính props
+    const product = props?.product ? props.product : props;
+
+    // Cơ chế phòng vệ: Nếu hoàn toàn không có dữ liệu hợp lệ hoặc thiếu id, không render để tránh crash (TypeError)
+    if (!product || !product.id) {
+        return null;
+    }
+    
     return (
         <Link href={`/products/${product.id}`} className="group cursor-pointer flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
             {/* Ảnh Thumbnail */}
