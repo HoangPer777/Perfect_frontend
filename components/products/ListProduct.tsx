@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { CardProduct } from "./CardProduct";
+import CardProduct from "./CardProduct";
 import {useEffect, useState} from "react";
 import {productService} from "@/services/products/product.service";
 import {CardProductResponse} from "@/types/product";

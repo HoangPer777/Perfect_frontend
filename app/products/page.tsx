@@ -59,26 +59,26 @@
 //     </div>
 //   );
 // }
+
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { productService } from "@/services/products/product.service";
 import { CardProductResponse } from "@/types/product";
-import { CardProduct } from "@/components/products/CardProduct";
+import CardProduct from "@/components/products/CardProduct";
 
 export default function ProductListingPage() {
     const [products, setProducts] = useState<CardProductResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortBy, setSortBy] = useState("newest");
 
-    // Memoize hàm fetch để tránh re-render không cần thiết
     const fetchProducts = useCallback(async (sort: string) => {
         try {
             setLoading(true);
-            // Bạn có thể mở rộng productService.getNewestProducts hoặc thêm params sort
             const data = await productService.getNewestProducts();
-            // Giả lập sort tại FE nếu BE chưa hỗ trợ tham số sort
-            setProducts(data);
+
+            // Trả về lệnh gán thẳng trực tiếp như cũ
+            setProducts(data as any);
         } catch (error) {
             console.error("Lỗi tải trang sản phẩm:", error);
         } finally {
@@ -98,11 +98,10 @@ export default function ProductListingPage() {
 
             <div className="flex gap-8">
                 <aside className="w-64 shrink-0 hidden lg:block">
-                    {/* Giữ nguyên sidebar */}
+                    {/* Giữ nguyên nội dung bộ lọc Sidebar */}
                 </aside>
 
                 <main className="flex-1">
-                    {/* Bổ sung xử lý Sort bằng state */}
                     <div className="flex justify-end mb-6">
                         <select
                             className="border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
@@ -122,12 +121,15 @@ export default function ProductListingPage() {
                             ))
                         ) : products.length > 0 ? (
                             products.map((product) => (
-                                <CardProduct key={product.id} product={product} />
+                                // Kiểm tra nghiêm ngặt sự tồn tại của product và id trước khi truyền xuống card
+                                product && product.id ? (
+                                    <CardProduct key={product.id} product={product} />
+                                ) : null
                             ))
                         ) : (
                             <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
-                                <p className="text-lg">Không tìm thấy sản phẩm nào.</p>
-                                <button onClick={() => window.location.reload()} className="mt-4 text-primary underline">Thử lại</button>
+                                <p className="text-lg">Không tìm thấy sản phẩm nào phù hợp.</p>
+                                <button onClick={() => fetchProducts(sortBy)} className="mt-4 text-primary underline">Thử lại</button>
                             </div>
                         )}
                     </div>
