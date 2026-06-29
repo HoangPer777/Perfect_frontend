@@ -60,7 +60,7 @@ export default function RegisterContent() {
     setOtpLoading(true);
     setOtpError(null);
     try {
-      await authService.verifyEmail(otp);
+      await authService.verifyEmail(otp, email);
       setOtpSuccess(true);
     } catch (err: any) {
       console.error(err);

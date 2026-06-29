@@ -12,6 +12,7 @@ import 'swiper/css/pagination';
 import { ProductResponse } from "@/types/product";
 import {useRouter} from "next/navigation";
 import {cartService} from "@/services/cart/cart.service";
+import { useAuthStore } from "@/store/authStore";
 
 interface Props {
     product: ProductResponse;
@@ -22,6 +23,20 @@ export default function ProductDetailContent({ product }: Props) {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const router = useRouter();
+    const { isAuthenticated } = useAuthStore();
+
+    const handleContactDesigner = () => {
+        if (!isAuthenticated) {
+            alert("Vui lòng đăng nhập để thực hiện tính năng này!");
+            router.push(`/login?redirect=/products/${product.id}`);
+            return;
+        }
+        const designerId = product.designer?.id;
+        const name = product.designer?.username || "Designer";
+        const avatar = product.designer?.avatarUrl || "";
+        router.push(`/chat?userId=${designerId}&name=${encodeURIComponent(name)}&avatar=${encodeURIComponent(avatar)}`);
+    };
+
     const handleOrderNow = async () => {
         try {
             await cartService.addToCart({
@@ -90,7 +105,10 @@ export default function ProductDetailContent({ product }: Props) {
                     <button className="p-3 bg-white border border-gray-200/60 rounded-full text-gray-500 hover:text-red-500 hover:border-red-200 shadow-sm transition-all">
                         <Heart size={18} />
                     </button>
-                    <button className="px-5 py-3 bg-white border border-gray-200/80 hover:bg-gray-50 text-[#0F172A] rounded-full text-xs font-bold shadow-2xs transition-all active:scale-[0.98]">
+                    <button 
+                        onClick={handleContactDesigner}
+                        className="px-5 py-3 bg-white border border-gray-200/80 hover:bg-gray-50 text-[#0F172A] rounded-full text-xs font-bold shadow-2xs transition-all active:scale-[0.98]"
+                    >
                         Contact Designer
                     </button>
                     <button
@@ -184,7 +202,10 @@ export default function ProductDetailContent({ product }: Props) {
                         >
                             Order now
                         </button>
-                        <button className="px-5 py-3.5 bg-[#F1F3F6] hover:bg-gray-200/80 text-gray-700 rounded-[20px] text-xs font-bold transition-all flex items-center gap-2">
+                        <button 
+                            onClick={handleContactDesigner}
+                            className="px-5 py-3.5 bg-[#F1F3F6] hover:bg-gray-200/80 text-gray-700 rounded-[20px] text-xs font-bold transition-all flex items-center gap-2"
+                        >
                             <MessageSquare size={14} />
                             Contact Designer
                         </button>

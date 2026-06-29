@@ -51,6 +51,12 @@ export const cartService = {
     clearCart: async () => {
         return await axios.delete(`${API_URL}/clear`, getAuthHeader());
     },
+
+    countCartItems: async (): Promise<number> => {
+        const res = await api.get("/carts/count");
+        return res.data;
+    },
+
     addCartItem: async (productId: string, quantity?: number) => {
         try {
             const res = await api.post("/cart/add", {

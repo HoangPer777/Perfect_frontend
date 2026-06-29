@@ -13,11 +13,13 @@ import {
     Award,
     Lock,
     Sparkles,
-    Link as LinkIcon
+    Link as LinkIcon,
+    X
 } from "lucide-react";
 import {useAuthStore} from "@/store/authStore";
 import {authService} from "@/services/auth.service";
 import {cloudinary} from "@/services/cloudinary/upload.service";
+import {reviewService} from "@/services/review/review.service";
 import axios from "axios";
 
 export default function ProfileSettingsPage() {
@@ -67,6 +69,65 @@ export default function ProfileSettingsPage() {
     const [designerLoading, setDesignerLoading] = useState(false);
     const [designerSuccessMsg, setDesignerSuccessMsg] = useState("");
     const [designerErrorMsg, setDesignerErrorMsg] = useState("");
+
+    // Review Modal states
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [reviewProductId, setReviewProductId] = useState("");
+    const [reviewProductTitle, setReviewProductTitle] = useState("");
+    const [reviewProductThumb, setReviewProductThumb] = useState("");
+    const [reviewRating, setReviewRating] = useState(5);
+    const [reviewComment, setReviewComment] = useState("");
+    const [submittingReview, setSubmittingReview] = useState(false);
+    const [reviewError, setReviewError] = useState("");
+
+    const handleOpenReviewModal = (productId: string, title: string, thumb: string) => {
+        setReviewProductId(productId);
+        setReviewProductTitle(title);
+        setReviewProductThumb(thumb);
+        setReviewRating(5);
+        setReviewComment("");
+        setReviewError("");
+        setReviewModalOpen(true);
+    };
+
+    const handleCloseReviewModal = () => {
+        setReviewModalOpen(false);
+    };
+
+    const handleSubmitReview = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!reviewComment.trim()) {
+            setReviewError("Vui lòng nhập nội dung đánh giá.");
+            return;
+        }
+        setSubmittingReview(true);
+        setReviewError("");
+        try {
+            await reviewService.createProductReview({
+                productId: reviewProductId,
+                rating: reviewRating,
+                content: reviewComment
+            });
+            // Cập nhật state list sản phẩm để nút đổi thành "Đã đánh giá"
+            setPurchasedProducts((prevProducts: any[]) => {
+                return prevProducts.map((order) => {
+                    const updatedItems = order.items.map((item: any) => {
+                        if (item.productId === reviewProductId) {
+                            return { ...item, isReviewed: true, rating: reviewRating };
+                        }
+                        return item;
+                    });
+                    return { ...order, items: updatedItems };
+                });
+            });
+            setReviewModalOpen(false);
+        } catch (err: any) {
+            console.error(err);
+            setReviewError(err.response?.data?.message || err.message || "Không thể gửi đánh giá.");
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
 
     useEffect(() => {
         if (activeTab === "purchase_history" && isAuthenticated && token) {
@@ -695,23 +756,41 @@ export default function ProfileSettingsPage() {
 
                                                     <div className="space-y-4">
                                                         {order.items.map((item: any) => (
-                                                            <div key={item.orderItemId} className="flex items-center gap-4 group">
-                                                                {/* Hình ảnh sản phẩm */}
-                                                                <div className="relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
-                                                                    <img
-                                                                        src={item.thumbnailUrl || "/default-product.png"}
-                                                                        alt={item.productTitle}
-                                                                        className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                                                                    />
+                                                            <div key={item.orderItemId} className="flex items-center justify-between gap-4 group">
+                                                                <div className="flex items-center gap-4 min-w-0 flex-1">
+                                                                    {/* Hình ảnh sản phẩm */}
+                                                                    <div className="relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
+                                                                        <img
+                                                                            src={item.thumbnailUrl || "/default-product.png"}
+                                                                            alt={item.productTitle}
+                                                                            className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                                                        />
+                                                                    </div>
+                                                                    {/* Thông tin sản phẩm */}
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <p className="font-medium text-gray-800 text-sm truncate group-hover:text-[#6b5b95]">
+                                                                            {item.productTitle}
+                                                                        </p>
+                                                                        <p className="font-bold text-[#6b5b95] text-sm mt-0.5">
+                                                                            {item.priceAtPurchase?.toLocaleString('vi-VN')} ₫
+                                                                        </p>
+                                                                    </div>
                                                                 </div>
-                                                                {/* Thông tin sản phẩm */}
-                                                                <div className="flex-1 min-w-0">
-                                                                    <p className="font-medium text-gray-800 text-sm truncate group-hover:text-[#6b5b95]">
-                                                                        {item.productTitle}
-                                                                    </p>
-                                                                    <p className="font-bold text-[#6b5b95] text-sm mt-0.5">
-                                                                        {item.priceAtPurchase?.toLocaleString('vi-VN')} ₫
-                                                                    </p>
+
+                                                                {/* Nút Đánh Giá */}
+                                                                <div className="flex-shrink-0">
+                                                                    {item.isReviewed ? (
+                                                                        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
+                                                                            Đã đánh giá <span className="text-amber-500">★</span> {item.rating}
+                                                                        </span>
+                                                                    ) : (
+                                                                        <button
+                                                                            onClick={() => handleOpenReviewModal(item.productId, item.productTitle, item.thumbnailUrl)}
+                                                                            className="px-4 py-1.5 rounded-full border border-[#6b5b95] text-[#6b5b95] text-xs font-bold hover:bg-[#6b5b95] hover:text-white transition-all shadow-sm active:scale-95"
+                                                                        >
+                                                                            Đánh giá
+                                                                        </button>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -961,6 +1040,78 @@ export default function ProfileSettingsPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Review Modal */}
+            {reviewModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white w-full max-w-md mx-4 rounded-3xl shadow-2xl border border-gray-100 overflow-hidden transform animate-in zoom-in-95 duration-200">
+                        <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-gray-800">Đánh giá sản phẩm</h3>
+                            <button onClick={handleCloseReviewModal} className="text-gray-400 hover:text-gray-600 transition-colors">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmitReview} className="p-6 space-y-6">
+                            <div className="flex gap-4 items-center bg-slate-50 p-3 rounded-2xl">
+                                <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-100 bg-white flex-shrink-0">
+                                    <img src={reviewProductThumb || "/default-product.png"} alt={reviewProductTitle} className="w-full h-full object-cover" />
+                                </div>
+                                <p className="font-medium text-gray-800 text-sm truncate flex-1">{reviewProductTitle}</p>
+                            </div>
+
+                            {reviewError && (
+                                <div className="p-3 bg-red-50 border border-red-100 text-red-500 rounded-xl text-xs font-semibold">
+                                    {reviewError}
+                                </div>
+                            )}
+
+                            <div className="space-y-2 text-center">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Chọn số sao đánh giá</label>
+                                <div className="flex justify-center gap-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <button
+                                            type="button"
+                                            key={star}
+                                            onClick={() => setReviewRating(star)}
+                                            className="text-3xl transition-transform hover:scale-110 active:scale-90"
+                                        >
+                                            <span className={star <= reviewRating ? "text-amber-400" : "text-gray-200"}>★</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block ml-1">Ý kiến bình luận</label>
+                                <textarea
+                                    rows={4}
+                                    value={reviewComment}
+                                    onChange={(e) => setReviewComment(e.target.value)}
+                                    placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+                                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:border-[#6b5b95] focus:ring-1 focus:ring-[#6b5b95] outline-none transition-all resize-none"
+                                />
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={handleCloseReviewModal}
+                                    className="px-5 py-2.5 rounded-full border border-gray-200 text-gray-500 text-xs font-bold hover:bg-gray-50 active:scale-95 transition-all"
+                                >
+                                    HỦY BỎ
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={submittingReview}
+                                    className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#4f6d7a] to-[#6b5b95] text-white text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md disabled:opacity-75"
+                                >
+                                    {submittingReview ? "ĐANG GỬI..." : "GỬI ĐÁNH GIÁ"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
