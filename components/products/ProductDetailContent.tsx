@@ -53,11 +53,17 @@ export default function ProductDetailContent({ product }: Props) {
 
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-white shadow-sm">
-                            <img
-                                src={product.designer?.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80"}
-                                alt={product.designer?.username}
-                                className="w-full h-full object-cover"
-                            />
+                            {product.designer?.avatarUrl ? (
+                                <img
+                                    src={product.designer.avatarUrl}
+                                    alt={product.designer?.username || "Designer"}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-tr from-[#4f6d7a] to-[#6b5b95] text-white flex items-center justify-center font-bold text-xl uppercase shrink-0 select-none">
+                                    {product.designer?.username ? product.designer.username.substring(0, 2) : "DE"}
+                                </div>
+                            )}
                         </div>
                         <div>
                             <div className="flex items-center gap-2">

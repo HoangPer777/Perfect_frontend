@@ -113,11 +113,17 @@ export default function ListProduct() {
                             <div className="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-[2rem] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
                                 <div className="relative mb-4">
                                     <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg scale-0 group-hover:scale-110 transition-transform duration-500"></div>
-                                    <img
-                                        src={designer.avatarUrl}
-                                        className="relative w-24 h-24 rounded-full border-4 border-white shadow-md object-cover"
-                                        alt={designer.username}
-                                    />
+                                    {designer.avatarUrl ? (
+                                        <img
+                                            src={designer.avatarUrl}
+                                            className="relative w-24 h-24 rounded-full border-4 border-white shadow-md object-cover"
+                                            alt={designer.username || "Designer"}
+                                        />
+                                    ) : (
+                                        <div className="relative w-24 h-24 rounded-full border-4 border-white shadow-md bg-gradient-to-tr from-[#4f6d7a] to-[#6b5b95] text-white flex items-center justify-center font-bold text-2xl uppercase shrink-0 select-none">
+                                            {designer.username ? designer.username.substring(0, 2) : "DE"}
+                                        </div>
+                                    )}
                                 </div>
                                 <h3 className="font-bold text-slate-800 text-sm">{designer.username}</h3>
                                 <p className="text-[11px] text-primary font-bold uppercase mt-1">{designer.totalSold}</p>

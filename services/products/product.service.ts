@@ -4,7 +4,11 @@ import {
     AddProductResponse,
     CardProductResponse,
     ProductResponse,
-    SnapshotProductResponse
+    SnapshotProductResponse,
+    DesignerServiceGroupResponse,
+    ServicePackageResponse,
+    AdminProductListResponse
+
 } from "@/types/product";
 import { Category } from "@/types/category";
 import { CardDesignerResponse } from "@/types/designer";
@@ -157,7 +161,39 @@ export const productService = {
             return null;
         }
     },
-    getMyProducts: async (): Promise<SnapshotProductResponse[]> => { // <-- Thay đổi ở đây
+//
+// <<<<<<< HEAD
+//     getMyProducts: async (): Promise<SnapshotProductResponse[]> => { // <-- Thay đổi ở đây
+//         try {
+//             const res = await api.get("/products/my-products");
+//             return res.data;
+//         } catch (error) {
+//             console.error("Lỗi tải danh sách sản phẩm cá nhân:", error);
+//             return [];
+//         }
+//     }
+// =======
+//     getMyProducts: async (): Promise<SnapshotProductResponse[]> => {
+//         const res = await api.get("/products/my-products");
+//         return res.data
+//     },
+//     getDesignerServiceGroups: async (): Promise<DesignerServiceGroupResponse[]> => {
+//         const res = await api.get("/services/designers");
+//         return res.data;
+//     },
+//
+//     getDesignerPackages: async (designerId: string): Promise<ServicePackageResponse[]> => {
+//         const res = await api.get(`/services/designers/${designerId}`);
+//         return res.data;
+//     },
+//
+//     getAdminProducts: async (): Promise<AdminProductListResponse[]> => {
+//         const res = await api.get("/products/admin");
+//         return res.data;
+//     },
+// >>>>>>> e4c44b3356ab98d9c5645077b7c4c4478843da9f
+// };
+    getMyProducts: async (): Promise<SnapshotProductResponse[]> => {
         try {
             const res = await api.get("/products/my-products");
             return res.data;
@@ -165,5 +201,35 @@ export const productService = {
             console.error("Lỗi tải danh sách sản phẩm cá nhân:", error);
             return [];
         }
-    }
+    },
+
+    getDesignerServiceGroups: async (): Promise<DesignerServiceGroupResponse[]> => {
+        try {
+            const res = await api.get("/services/designers");
+            return res.data;
+        } catch (error) {
+            console.error("Lỗi tải nhóm dịch vụ:", error);
+            return [];
+        }
+    },
+
+    getDesignerPackages: async (designerId: string): Promise<ServicePackageResponse[]> => {
+        try {
+            const res = await api.get(`/services/designers/${designerId}`);
+            return res.data;
+        } catch (error) {
+            console.error("Lỗi tải các gói dịch vụ:", error);
+            return [];
+        }
+    },
+
+    getAdminProducts: async (): Promise<AdminProductListResponse[]> => {
+        try {
+            const res = await api.get("/products/admin");
+            return res.data;
+        } catch (error) {
+            console.error("Lỗi tải danh sách sản phẩm admin:", error);
+            return [];
+        }
+    },
 };

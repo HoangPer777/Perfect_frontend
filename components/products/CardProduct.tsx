@@ -129,6 +129,17 @@ export default function CardProduct(props: any) {
                             className="w-7 h-7 rounded-full object-cover border border-gray-100"
                             alt={product.usernameDesigner || "Designer"}
                         />
+                        {product.avatarUrlDesigner ? (
+                            <img
+                                src={product.avatarUrlDesigner}
+                                className="w-7 h-7 rounded-full object-cover border border-gray-100"
+                                alt={product.usernameDesigner || "Designer"}
+                            />
+                        ) : (
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#4f6d7a] to-[#6b5b95] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm border border-gray-100 shrink-0">
+                                {product.usernameDesigner ? product.usernameDesigner.substring(0, 2) : "DE"}
+                            </div>
+                        )}
                         <span className="text-xs font-semibold text-slate-600 truncate max-w-[100px]">
                             {product.usernameDesigner || "Unknown"}
                         </span>
