@@ -2,6 +2,7 @@
 import axios from "axios";
 import { CartResponse } from "@/types/cart";
 import { AddToCartRequest } from "@/types/cart";
+import api from "@/lib/api";
 
 const API_URL = "http://localhost:8080/api/v1/cart";
 
@@ -49,5 +50,16 @@ export const cartService = {
 
     clearCart: async () => {
         return await axios.delete(`${API_URL}/clear`, getAuthHeader());
+    },
+    addCartItem: async (productId: string, quantity?: number) => {
+        try {
+            const res = await api.post("/cart/add", {
+                productId: productId,
+                quantity: quantity || 1
+            });
+            return res.data;
+        } catch (error) {
+            throw error;
+        }
     }
 };
