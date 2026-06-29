@@ -46,8 +46,7 @@ export default function RegisterContent() {
   };
 
   const handleSocialLogin = (provider: 'google' | 'facebook') => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || "http://localhost:8080";
-    window.location.href = `${backendUrl}/oauth2/authorization/${provider}`;
+    window.location.href = `/oauth2/authorization/${provider}`;
   };
 
   const [otp, setOtp] = useState("");
@@ -60,7 +59,7 @@ export default function RegisterContent() {
     setOtpLoading(true);
     setOtpError(null);
     try {
-      await authService.verifyEmail(otp);
+      await authService.verifyEmail(otp, email);
       setOtpSuccess(true);
     } catch (err: any) {
       console.error(err);

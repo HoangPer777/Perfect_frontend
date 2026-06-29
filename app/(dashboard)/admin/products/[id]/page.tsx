@@ -31,6 +31,11 @@ export default function ProductDetailPage() {
 
                 setProduct(productData);
 
+                if (!productData) {
+                    setPackages([]);
+                    return;
+                }
+
                 const packageData =
                     await productService.getDesignerPackages(
                         productData.designer.id
