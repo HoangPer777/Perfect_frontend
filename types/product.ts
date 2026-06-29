@@ -78,3 +78,38 @@ export interface SnapshotProductResponse {
     soldCount: number;
     createdAt: string | Date; 
 }
+export type PackageType = "BASIC" | "PRO" | "VIP" | "CUSTOM" | string;
+
+export interface ServicePackageResponse {
+    id: string;
+    title: string;
+    description: string;
+    packageType: PackageType;
+    price: number;
+    deliveryDays: number;
+    revisionsLimit: number;
+    productId: string | null;
+    productTitle: string | null;
+    designerId: string;
+    designerName: string;
+    designerAvatar: string | null;
+}
+
+export interface DesignerServiceGroupResponse {
+    designerId: string;
+    designerName: string;
+    designerAvatarUrl: string | null;
+    packages: ServicePackageResponse[];
+}
+export interface AdminProductListResponse {
+    id: string;
+    title: string;
+    thumbnailUrl: string;
+    designerName: string;
+    status: string;
+    price: number;
+    basic: ServicePackageResponse | null;
+    pro: ServicePackageResponse | null;
+    vip: ServicePackageResponse | null;
+    createdAt: string;
+}
