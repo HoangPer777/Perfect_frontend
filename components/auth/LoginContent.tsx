@@ -19,7 +19,7 @@ export default function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const setFieldCart = useCartStore((state) => state.setField);
+  //const setFieldCart = useCartStore((state) => state.setField);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,8 +37,8 @@ export default function LoginContent() {
       };
       setAuth(user, response.accessToken);
       
-      const countCartItems = await cartService.countCartItems();
-      setFieldCart("cartCount", countCartItems);
+      // const countCartItems = await cartService.countCartItems();
+      // setFieldCart("cartCount", countCartItems);
       
       router.push("/");
     } catch (err: any) {
