@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, User, Bell, ShoppingCart, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { Search, User, Bell, ShoppingCart, LogOut, LayoutDashboard, ChevronDown, MessageSquare } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import {useCartStore} from "@/store/cartStore";
+import api from "@/lib/api";
 
 export default function Navbar() {
   const router = useRouter();
@@ -15,6 +16,25 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   //const { cartCount, resetCount } = useCartStore()
   const [keyword, setKeyword] = useState<string>("");    
+  const [unreadChatCount, setUnreadChatCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (!mounted || !isAuthenticated) return;
+
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await api.get<{ unreadCount: number }>("/chat/unread-count");
+        setUnreadChatCount(res.data.unreadCount);
+      } catch (err) {
+        console.error("Failed to fetch unread chat count", err);
+      }
+    };
+
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 8000); // Thăm dò sau mỗi 8 giây
+
+    return () => clearInterval(interval);
+  }, [mounted, isAuthenticated]);
   useEffect(() => {
     setMounted(true);
     
@@ -85,6 +105,12 @@ export default function Navbar() {
             <Link href="/notifications" className="p-2 hover:bg-muted rounded-full relative text-gray-600 hover:text-primary transition-colors">
               <Bell size={20} />
               {/* TODO: Add notification red dot */}
+            </Link>
+            <Link href="/chat" title="Trò chuyện" className="p-2 hover:bg-muted rounded-full relative text-gray-600 hover:text-primary transition-colors flex items-center justify-center">
+              <MessageSquare size={20} />
+              {unreadChatCount > 0 && (
+                <span className="absolute top-1 right-1 bg-red-500 w-2.5 h-2.5 rounded-full border border-white"></span>
+              )}
             </Link>
 
             {/* Auth Section */}
