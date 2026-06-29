@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { taskService } from "@/services/order/task.service";
 import { AdminTaskListResponse } from "@/types/order";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
 const PAGE_SIZE = 5;
 
@@ -76,36 +77,7 @@ export default function AdminOrdersPage() {
 
     return (
         <div className="flex min-h-screen bg-gray-50">
-            <aside className="w-64 border-r bg-white p-6">
-                <h2 className="mb-8 text-2xl font-bold">Dashboard</h2>
-
-                <div className="space-y-2">
-                    <button className="w-full rounded-lg bg-black px-4 py-3 text-left text-white">
-                        Order Management
-                    </button>
-
-                    <button
-                        onClick={() => router.push("/admin/users")}
-                        className="w-full rounded-lg px-4 py-3 text-left hover:bg-gray-100"
-                    >
-                        User Management
-                    </button>
-
-                    <button
-                        onClick={() => router.push("/admin/products")}
-                        className="w-full rounded-lg px-4 py-3 text-left hover:bg-gray-100"
-                    >
-                        Product Management
-                    </button>
-
-                    <button
-                        onClick={() => router.push("/customer")}
-                        className="w-full rounded-lg px-4 py-3 text-left hover:bg-gray-100"
-                    >
-                        My History & Orders
-                    </button>
-                </div>
-            </aside>
+            <AdminSidebar />
 
             <main className="flex-1 space-y-6 p-8">
                 <div>

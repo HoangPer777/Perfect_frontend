@@ -44,7 +44,7 @@ export default function Navbar() {
               Perfect Market
             </Link>
             <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-              <Link href="/products" className="text-gray-600 hover:text-primary transition-colors">Products</Link>
+              <Link href="/search" className="text-gray-600 hover:text-primary transition-colors">Products</Link>
               <Link href="/services" className="text-gray-600 hover:text-primary transition-colors">Services</Link>
               <Link href="/designers" className="text-gray-600 hover:text-primary transition-colors">Top Designers</Link>
             </div>

@@ -13,3 +13,22 @@ export interface SnapshotUserResponse {
     roles: Role[];     
     createdAt: string;  
 }
+
+export interface UserInfoResponse {
+    id: string; 
+    email: string;
+    fullName: string;
+    username: string;
+    avatarUrl: string | null;
+    roles: Role[]; 
+    city: string | null;
+    detailedAddress: string | null;
+    specialization: string | null;
+    bio: string | null;
+    portfolioUrl: string | null;
+    skills: string | null;
+    experienceYears: number;
+    status: "ACTIVE" | "INACTIVE" | "BANNED" | string; 
+    isVerified: boolean;
+    createdAt: string; 
+}
