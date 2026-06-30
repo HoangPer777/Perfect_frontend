@@ -21,6 +21,7 @@ import {authService} from "@/services/auth.service";
 import {cloudinary} from "@/services/cloudinary/upload.service";
 import {reviewService} from "@/services/review/review.service";
 import axios from "axios";
+import api from "@/lib/api";
 
 export default function ProfileSettingsPage() {
     const router = useRouter();
@@ -30,7 +31,7 @@ export default function ProfileSettingsPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [purchasedProducts, setPurchasedProducts] = useState<any[]>([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
-
+    const [downloadFormat, setDownloadFormat] = useState("webp");
     // Form states
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -113,11 +114,11 @@ export default function ProfileSettingsPage() {
                 return prevProducts.map((order) => {
                     const updatedItems = order.items.map((item: any) => {
                         if (item.productId === reviewProductId) {
-                            return { ...item, isReviewed: true, rating: reviewRating };
+                            return {...item, isReviewed: true, rating: reviewRating};
                         }
                         return item;
                     });
-                    return { ...order, items: updatedItems };
+                    return {...order, items: updatedItems};
                 });
             });
             setReviewModalOpen(false);
@@ -275,6 +276,27 @@ export default function ProfileSettingsPage() {
             setPwdErrorMsg(err.response?.data?.message || "Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu cũ.");
         } finally {
             setPwdLoading(false);
+        }
+    };
+    const handleDownload = async (item: any, format: string) => {
+        try {
+            const res = await api.get(`/orders/download-link/${item.orderItemId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            let downloadUrl = res.data.downloadUrl;
+
+            // Xử lý chuyển đổi định dạng qua Cloudinary
+            if (downloadUrl.includes('cloudinary.com')) {
+                // Thay thế /upload/ bằng /upload/fl_attachment/ để tải xuống
+                // Sau đó thay đuôi file thành định dạng đã chọn
+                downloadUrl = downloadUrl.replace('/upload/', `/upload/fl_attachment/f_${format}/`);
+            }
+
+            window.open(downloadUrl, '_blank', 'noopener,noreferrer');
+        } catch (err: any) {
+            console.error("Lỗi lấy link tải:", err);
+            alert("Không thể tải sản phẩm.");
         }
     };
 
@@ -706,7 +728,7 @@ export default function ProfileSettingsPage() {
                                                             </td>
                                                             <td className="px-6 py-4">
                                                             <span
-                                                             className={`inline-flex px-2.5 py-1 rounded-full text-xs font-bold ${statusColor}`}>
+                                                                className={`inline-flex px-2.5 py-1 rounded-full text-xs font-bold ${statusColor}`}>
                                                              {statusName}
                                                                  </span>
                                                             </td>
@@ -738,28 +760,31 @@ export default function ProfileSettingsPage() {
                                             <Loader2 className="w-6 h-6 text-[#6b5b95] animate-spin"/>
                                         </div>
                                     ) : purchasedProducts.length === 0 ? (
-                                        <div className="text-center py-8 bg-[#f8fafc] rounded-2xl border border-dashed border-gray-200">
+                                        <div
+                                            className="text-center py-8 bg-[#f8fafc] rounded-2xl border border-dashed border-gray-200">
                                             <p className="text-sm text-gray-500">Chưa có sản phẩm nào.</p>
                                         </div>
                                     ) : (
                                         <div className="grid gap-4">
                                             {purchasedProducts.map((order: any) => (
-                                                <div key={order.orderId} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-[#6b5b95]/20 transition-all">
-                                                    <div className="flex justify-between items-center mb-4 border-b border-gray-50 pb-3">
+                                                <div key={order.orderId}
+                                                     className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:border-[#6b5b95]/20 transition-all">
+                                                    <div
+                                                        className="flex justify-between items-center mb-4 border-b border-gray-50 pb-3">
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                             Đơn hàng: {order.orderId.substring(0, 8)}
                         </span>
                                                         <span className="text-[11px] font-medium text-gray-400">
                             {new Date(order.purchaseDate).toLocaleDateString('vi-VN')}
-                        </span>
-                                                    </div>
-
+                        </span></div>
                                                     <div className="space-y-4">
                                                         {order.items.map((item: any) => (
-                                                            <div key={item.orderItemId} className="flex items-center justify-between gap-4 group">
+                                                            <div key={item.orderItemId}
+                                                                 className="flex items-center justify-between gap-4 group">
                                                                 <div className="flex items-center gap-4 min-w-0 flex-1">
                                                                     {/* Hình ảnh sản phẩm */}
-                                                                    <div className="relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
+                                                                    <div
+                                                                        className="relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
                                                                         <img
                                                                             src={item.thumbnailUrl || "/default-product.png"}
                                                                             alt={item.productTitle}
@@ -776,22 +801,43 @@ export default function ProfileSettingsPage() {
                                                                         </p>
                                                                     </div>
                                                                 </div>
-
-                                                                {/* Nút Đánh Giá */}
-                                                                <div className="flex-shrink-0">
-                                                                    {item.isReviewed ? (
-                                                                        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
-                                                                            Đã đánh giá <span className="text-amber-500">★</span> {item.rating}
+                                                                <div className="flex-shrink-0 flex gap-3">
+                                                                    {/* Nút Đánh Giá */}
+                                                                    <div className="flex-shrink-0">
+                                                                        {item.isReviewed ? (
+                                                                            <span
+                                                                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs font-semibold">
+                                                                            Đã đánh giá <span
+                                                                                className="text-amber-500">★</span> {item.rating}
                                                                         </span>
-                                                                    ) : (
-                                                                        <button
-                                                                            onClick={() => handleOpenReviewModal(item.productId, item.productTitle, item.thumbnailUrl)}
-                                                                            className="px-4 py-1.5 rounded-full border border-[#6b5b95] text-[#6b5b95] text-xs font-bold hover:bg-[#6b5b95] hover:text-white transition-all shadow-sm active:scale-95"
-                                                                        >
-                                                                            Đánh giá
-                                                                        </button>
-                                                                    )}
+                                                                        ) : (
+                                                                            <button
+                                                                                onClick={() => handleOpenReviewModal(item.productId, item.productTitle, item.thumbnailUrl)}
+                                                                                className="px-4 py-1.5 rounded-full border border-[#6b5b95] text-[#6b5b95] text-xs font-bold hover:bg-[#6b5b95] hover:text-white transition-all shadow-sm active:scale-95"
+                                                                            >
+                                                                                Đánh giá
+                                                                            </button>
+                                                                        )}
+                                                                    </div>
+                                                                    <select
+                                                                        value={downloadFormat}
+                                                                        onChange={(e) => setDownloadFormat(e.target.value)}
+                                                                        className="px-2 py-1.5 rounded-full border border-gray-200 text-xs text-gray-600 font-bold bg-white focus:outline-none"
+                                                                    >
+                                                                        <option value="webp">WebP</option>
+                                                                        <option value="jpg">JPG</option>
+                                                                        <option value="png">PNG</option>
+                                                                    </select>
+
+                                                                    {/* Nút tải sản phẩm */}
+                                                                    <button
+                                                                        onClick={() => handleDownload(item, downloadFormat)}
+                                                                        className="px-4 py-1.5 rounded-full border border-emerald-500 text-emerald-600 text-xs font-bold hover:bg-emerald-50 transition-all"
+                                                                    >
+                                                                        Tải về
+                                                                    </button>
                                                                 </div>
+
                                                             </div>
                                                         ))}
                                                     </div>
@@ -1043,30 +1089,37 @@ export default function ProfileSettingsPage() {
 
             {/* Review Modal */}
             {reviewModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white w-full max-w-md mx-4 rounded-3xl shadow-2xl border border-gray-100 overflow-hidden transform animate-in zoom-in-95 duration-200">
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div
+                        className="bg-white w-full max-w-md mx-4 rounded-3xl shadow-2xl border border-gray-100 overflow-hidden transform animate-in zoom-in-95 duration-200">
                         <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                             <h3 className="text-lg font-bold text-gray-800">Đánh giá sản phẩm</h3>
-                            <button onClick={handleCloseReviewModal} className="text-gray-400 hover:text-gray-600 transition-colors">
-                                <X className="w-5 h-5" />
+                            <button onClick={handleCloseReviewModal}
+                                    className="text-gray-400 hover:text-gray-600 transition-colors">
+                                <X className="w-5 h-5"/>
                             </button>
                         </div>
                         <form onSubmit={handleSubmitReview} className="p-6 space-y-6">
                             <div className="flex gap-4 items-center bg-slate-50 p-3 rounded-2xl">
-                                <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-100 bg-white flex-shrink-0">
-                                    <img src={reviewProductThumb || "/default-product.png"} alt={reviewProductTitle} className="w-full h-full object-cover" />
+                                <div
+                                    className="w-12 h-12 rounded-xl overflow-hidden border border-gray-100 bg-white flex-shrink-0">
+                                    <img src={reviewProductThumb || "/default-product.png"} alt={reviewProductTitle}
+                                         className="w-full h-full object-cover"/>
                                 </div>
                                 <p className="font-medium text-gray-800 text-sm truncate flex-1">{reviewProductTitle}</p>
                             </div>
 
                             {reviewError && (
-                                <div className="p-3 bg-red-50 border border-red-100 text-red-500 rounded-xl text-xs font-semibold">
+                                <div
+                                    className="p-3 bg-red-50 border border-red-100 text-red-500 rounded-xl text-xs font-semibold">
                                     {reviewError}
                                 </div>
                             )}
 
                             <div className="space-y-2 text-center">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Chọn số sao đánh giá</label>
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Chọn
+                                    số sao đánh giá</label>
                                 <div className="flex justify-center gap-2">
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <button
@@ -1075,14 +1128,16 @@ export default function ProfileSettingsPage() {
                                             onClick={() => setReviewRating(star)}
                                             className="text-3xl transition-transform hover:scale-110 active:scale-90"
                                         >
-                                            <span className={star <= reviewRating ? "text-amber-400" : "text-gray-200"}>★</span>
+                                            <span
+                                                className={star <= reviewRating ? "text-amber-400" : "text-gray-200"}>★</span>
                                         </button>
                                     ))}
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block ml-1">Ý kiến bình luận</label>
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block ml-1">Ý
+                                    kiến bình luận</label>
                                 <textarea
                                     rows={4}
                                     value={reviewComment}

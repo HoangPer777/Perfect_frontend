@@ -52,7 +52,7 @@ export default function Page() {
             const response = await api.post('/payments/init', {
                 orderId: newOrderId,
                 amount: Math.round(calculateTotal()),
-                provider: 'PAYPAL' // Cố định PayPal
+                provider: 'PAYPAL'
             });
 
             if (response.data.paymentUrl) {
