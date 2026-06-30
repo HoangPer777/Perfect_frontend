@@ -21,7 +21,7 @@ export default function Home() {
         >
           Explore Products
         </Link>
-        <Link href="/designer/ranking" className="text-sm font-semibold leading-6">
+        <Link href="/designers" className="text-sm font-semibold leading-6">
           View Top Designers <span aria-hidden="true">→</span>
         </Link>
       </div>

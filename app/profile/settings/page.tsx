@@ -133,9 +133,7 @@ export default function ProfileSettingsPage() {
     useEffect(() => {
         if (activeTab === "purchase_history" && isAuthenticated && token) {
             setLoadingProducts(true);
-            axios.get('http://localhost:8080/api/v1/orders/history', {
-                headers: {Authorization: `Bearer ${token}`}
-            })
+            api.get('/orders/history')
                 .then((res) => setPurchasedProducts(res.data))
                 .catch(() => setErrorMsg("Không thể lấy lịch sử sản phẩm."))
                 .finally(() => setLoadingProducts(false));

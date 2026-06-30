@@ -3,6 +3,8 @@ import { productService } from "@/services/products/product.service";
 import { CardDesignerResponse } from "@/types/designer";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function DesignersPage() {
     let designers: CardDesignerResponse[] = [];
 
