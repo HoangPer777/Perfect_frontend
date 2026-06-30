@@ -5,6 +5,7 @@ import ProductGrid from "@/components/products/DesignerProducts";
 import {Layers, LayoutGrid, ShoppingBag, Sparkles} from 'lucide-react';
 import DesignerOverview from "@/components/designer/Overview";
 import ServicesManagement from "@/components/designer/ServicesManagement";
+import OrdersManagement from "@/components/designer/OrdersManagement";
 
 type TabType = 'Overview' | 'Orders' | 'Products' | 'Services';
 
@@ -52,6 +53,8 @@ export default function DesignerPage() {
                         <DesignerOverview />
                     ) : activeTab === 'Services' ? (
                         <ServicesManagement />
+                    ) : activeTab === 'Orders' ? (
+                        <OrdersManagement />
                     ) : (
                         /* Placeholder style for upcoming tabs */
                         <div className="w-full min-h-[400px] bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center p-8">

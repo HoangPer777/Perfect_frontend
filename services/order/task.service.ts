@@ -12,6 +12,16 @@ export const taskService = {
         const res = await api.get(`/tasks/designer/chart`)
         return res.data
     },
+    getDesignerTasks: async (): Promise<any[]> => {
+        const res = await api.get(`/tasks/designer`);
+        return res.data;
+    },
+    updateTaskStatus: async (taskId: string, status: string): Promise<any> => {
+        const res = await api.patch(`/tasks/${taskId}/status`, null, {
+            params: { status }
+        });
+        return res.data;
+    },
     getAdminTasks: async (): Promise<AdminTaskListResponse[]> => {
         const res = await api.get(`/tasks/admin`);
         return res.data;
