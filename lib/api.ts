@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 
-const apiBaseUrl =
-    typeof window === "undefined"
-        ? process.env.API_INTERNAL_URL ||
-          process.env.NEXT_PUBLIC_API_URL ||
-          "http://localhost:8080/api/v1"
-        : "/api/v1";
-
+// const apiBaseUrl =
+//     typeof window === "undefined"
+//         ? process.env.API_INTERNAL_URL ||
+//           process.env.NEXT_PUBLIC_API_URL ||
+//           "http://localhost:8080/api/v1"
+//         : "/api/v1";
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 const api = axios.create({
     baseURL: apiBaseUrl,
     headers: {
